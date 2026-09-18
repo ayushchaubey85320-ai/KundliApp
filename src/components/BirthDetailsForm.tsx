@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { searchLocations, GeocodingResult } from '../services/geocodingService';
-import { MapPin, Calendar, Clock, User, Compass, Sparkles, Search, Loader2 } from 'lucide-react';
+import { Language, TRANSLATIONS } from '../i18n/translations';
+import { MapPin, Calendar, Clock, User, Compass, Search, Loader2 } from 'lucide-react';
 
 export interface BirthFormData {
   name: string;
@@ -18,29 +19,35 @@ interface BirthDetailsFormProps {
   onSubmit: (data: BirthFormData) => void;
   formTitle?: string;
   submitLabel?: string;
+  language?: Language;
+  onLanguageChange?: (lang: Language) => void;
 }
 
 export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
   initialData,
   onSubmit,
-  formTitle = 'जन्म विवरण प्रविष्ट करें (Enter Birth Details)',
-  submitLabel = 'कुंडली बनाएं (Generate Kundli)',
+  formTitle,
+  submitLabel,
+  language = 'hi',
+  onLanguageChange,
 }) => {
-  const [name, setName] = useState(initialData?.name || 'आयुष चौबे');
+  const t = TRANSLATIONS[language];
+
+  const [name, setName] = useState(initialData?.name || '');
   const [gender, setGender] = useState<'Male' | 'Female' | 'Other'>(initialData?.gender || 'Male');
-  const [date, setDate] = useState(initialData?.date || '1998-08-15');
-  const [time, setTime] = useState(initialData?.time || '06:30');
-  const [citySearch, setCitySearch] = useState(initialData?.cityName || 'Auraiya, Uttar Pradesh');
+  const [date, setDate] = useState(initialData?.date || '2000-01-01');
+  const [time, setTime] = useState(initialData?.time || '12:00');
+  const [citySearch, setCitySearch] = useState(initialData?.cityName || '');
   const [selectedCoords, setSelectedCoords] = useState<{
     latitude: number;
     longitude: number;
     timezone: number;
     displayName: string;
   }>({
-    latitude: initialData?.latitude || 26.4674,
-    longitude: initialData?.longitude || 79.5135,
+    latitude: initialData?.latitude || 28.6139,
+    longitude: initialData?.longitude || 77.2090,
     timezone: initialData?.timezoneOffset || 5.5,
-    displayName: initialData?.cityName || 'Auraiya, Uttar Pradesh',
+    displayName: initialData?.cityName || 'New Delhi, India',
   });
 
   const [searchResults, setSearchResults] = useState<GeocodingResult[]>([]);
@@ -84,7 +91,7 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
   // GPS Geolocation auto-detection
   const handleUseGPS = () => {
     if (!navigator.geolocation) {
-      alert('आपके ब्राउज़र में जीपीएस लोकेशन उपलब्ध नहीं है।');
+      alert(language === 'hi' ? 'आपके ब्राउज़र में जीपीएस लोकेशन उपलब्ध नहीं है।' : 'GPS is not available on this device.');
       return;
     }
     setGpsLoading(true);
@@ -99,66 +106,32 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
           timezone: 5.5,
           displayName: `जीपीएस स्थान (${lat}°, ${lng}°)`,
         });
-        setCitySearch(`जीपीएस: ${lat}°, ${lng}°`);
+        setCitySearch(`जीपीएस (${lat}°, ${lng}°)`);
       },
-      (err) => {
+      () => {
         setGpsLoading(false);
-        alert('जीपीएस लोकेशन प्राप्त नहीं हो सकी: ' + err.message);
-      },
-      { timeout: 10000 }
+        alert(language === 'hi' ? 'जीपीएस स्थान प्राप्त नहीं हो सका।' : 'Unable to acquire GPS coordinates.');
+      }
     );
-  };
-
-  // Quick preset loader
-  const loadPreset = (preset: 'auraiya' | 'kashi' | 'ayodhya') => {
-    if (preset === 'auraiya') {
-      setName('आयुष चौबे');
-      setDate('1998-08-15');
-      setTime('06:30');
-      setSelectedCoords({
-        latitude: 26.4674,
-        longitude: 79.5135,
-        timezone: 5.5,
-        displayName: 'Auraiya, Uttar Pradesh',
-      });
-      setCitySearch('Auraiya, Uttar Pradesh');
-    } else if (preset === 'kashi') {
-      setName('काशी जातक');
-      setDate('1995-10-24');
-      setTime('14:45');
-      setSelectedCoords({
-        latitude: 25.3176,
-        longitude: 82.9739,
-        timezone: 5.5,
-        displayName: 'Varanasi (Kashi), Uttar Pradesh',
-      });
-      setCitySearch('Varanasi (Kashi), Uttar Pradesh');
-    } else if (preset === 'ayodhya') {
-      setName('राम जन्म लग्न');
-      setDate('2024-01-22');
-      setTime('12:29');
-      setSelectedCoords({
-        latitude: 26.7922,
-        longitude: 82.1998,
-        timezone: 5.5,
-        displayName: 'Ayodhya, Uttar Pradesh',
-      });
-      setCitySearch('Ayodhya, Uttar Pradesh');
-    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      alert('कृपया जातक का नाम दर्ज करें।');
+      alert(language === 'hi' ? 'कृपया जातक का नाम दर्ज करें।' : 'Please enter person’s name.');
       return;
     }
+    if (!citySearch.trim()) {
+      alert(language === 'hi' ? 'कृपया जन्म स्थान का चयन करें।' : 'Please specify place of birth.');
+      return;
+    }
+
     onSubmit({
-      name,
+      name: name.trim(),
       gender,
       date,
       time,
-      cityName: citySearch || selectedCoords.displayName,
+      cityName: citySearch.trim(),
       latitude: selectedCoords.latitude,
       longitude: selectedCoords.longitude,
       timezoneOffset: selectedCoords.timezone,
@@ -166,32 +139,48 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
   };
 
   return (
-    <div className="bg-[#101726]/95 border border-amber-500/30 rounded-2xl p-4 sm:p-5 shadow-2xl backdrop-blur-md max-w-[430px] mx-auto select-none">
-      <div className="flex items-center justify-between pb-3 border-b border-amber-500/20 mb-4">
-        <h2 className="text-sm sm:text-base font-bold text-amber-300 font-serif flex items-center gap-1.5">
-          <Sparkles size={16} className="text-amber-400" /> {formTitle}
-        </h2>
-        {/* Quick Location Chips */}
-        <div className="flex items-center gap-1.5 text-[11px]">
-          <span
-            className="cursor-pointer px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 font-semibold"
-            onClick={() => loadPreset('auraiya')}
-          >
-            औरैया
-          </span>
-          <span
-            className="cursor-pointer px-2 py-0.5 rounded bg-slate-800 text-slate-300 hover:bg-slate-700"
-            onClick={() => loadPreset('kashi')}
-          >
-            काशी
-          </span>
-          <span
-            className="cursor-pointer px-2 py-0.5 rounded bg-slate-800 text-slate-300 hover:bg-slate-700"
-            onClick={() => loadPreset('ayodhya')}
-          >
-            अयोध्या
-          </span>
+    <div className="bg-[#101524] border border-amber-500/30 rounded-3xl p-4 sm:p-5 shadow-2xl relative overflow-hidden">
+      {/* Decorative Aura */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+
+      {/* Header: Title + Language Selection (as specifically requested) */}
+      <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-sm">
+            🕉️
+          </div>
+          <h2 className="text-sm sm:text-base font-bold text-amber-100 font-serif">
+            {formTitle || t.formHeading}
+          </h2>
         </div>
+
+        {/* Language Selection Segment (Hindi / English) */}
+        {onLanguageChange && (
+          <div className="flex items-center bg-slate-900 border border-slate-700 rounded-xl p-0.5">
+            <button
+              type="button"
+              onClick={() => onLanguageChange('hi')}
+              className={`px-2 py-1 text-[11px] font-bold rounded-lg transition-all ${
+                language === 'hi'
+                  ? 'bg-amber-500 text-slate-950 shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              हिन्दी
+            </button>
+            <button
+              type="button"
+              onClick={() => onLanguageChange('en')}
+              className={`px-2 py-1 text-[11px] font-bold rounded-lg transition-all ${
+                language === 'en'
+                  ? 'bg-amber-500 text-slate-950 shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              English
+            </button>
+          </div>
+        )}
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-3.5">
@@ -199,28 +188,28 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
         <div className="grid grid-cols-3 gap-2.5">
           <div className="col-span-2">
             <label className="block text-xs text-slate-300 mb-1 flex items-center gap-1">
-              <User size={12} className="text-amber-400" /> जातक का नाम
+              <User size={12} className="text-amber-400" /> {t.formName}
             </label>
             <input
               type="text"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="नाम दर्ज करें..."
+              placeholder={language === 'hi' ? 'उदा. राहुल शर्मा' : 'e.g., Rahul Sharma'}
               className="w-full px-3 py-2 bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-xl text-xs sm:text-sm text-slate-100 placeholder-slate-500 outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-xs text-slate-300 mb-1">लिंग</label>
+            <label className="block text-xs text-slate-300 mb-1">{t.formGender}</label>
             <select
               value={gender}
               onChange={(e) => setGender(e.target.value as any)}
               className="w-full px-2 py-2 bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-xl text-xs sm:text-sm text-slate-100 outline-none"
             >
-              <option value="Male">पुरुष</option>
-              <option value="Female">स्त्री</option>
-              <option value="Other">अन्य</option>
+              <option value="Male">{t.formMale}</option>
+              <option value="Female">{t.formFemale}</option>
+              <option value="Other">अन्य (Other)</option>
             </select>
           </div>
         </div>
@@ -229,7 +218,7 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
         <div className="grid grid-cols-2 gap-2.5">
           <div>
             <label className="block text-xs text-slate-300 mb-1 flex items-center gap-1">
-              <Calendar size={12} className="text-amber-400" /> जन्म तिथि
+              <Calendar size={12} className="text-amber-400" /> {t.formDate}
             </label>
             <input
               type="date"
@@ -242,7 +231,7 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
 
           <div>
             <label className="block text-xs text-slate-300 mb-1 flex items-center gap-1">
-              <Clock size={12} className="text-amber-400" /> जन्म समय
+              <Clock size={12} className="text-amber-400" /> {t.formTime}
             </label>
             <input
               type="time"
@@ -258,14 +247,14 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
         <div className="relative">
           <div className="flex items-center justify-between mb-1">
             <label className="text-xs text-slate-300 flex items-center gap-1">
-              <MapPin size={12} className="text-amber-400" /> जन्म स्थान (जिला/तहसील/गांव)
+              <MapPin size={12} className="text-amber-400" /> {t.formPlace}
             </label>
             <button
               type="button"
               onClick={handleUseGPS}
               className="text-[11px] text-amber-300 hover:text-amber-200 flex items-center gap-1 underline"
             >
-              <Compass size={11} /> {gpsLoading ? 'स्थान खोज रहे...' : 'जीपीएस'}
+              <Compass size={11} /> {gpsLoading ? '...' : (language === 'hi' ? 'जीपीएस से लें' : 'Use GPS')}
             </button>
           </div>
 
@@ -278,7 +267,7 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
               onFocus={() => {
                 if (citySearch.trim()) handleCityInput(citySearch);
               }}
-              placeholder="स्थान खोजें (उदा. Auraiya, Bidhuna, Dibiyapur)..."
+              placeholder={language === 'hi' ? 'स्थान खोजें (उदा. Varanasi, Delhi, Lucknow)...' : 'Search city or town...'}
               className="w-full pl-8 pr-8 py-2 bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-xl text-xs sm:text-sm text-slate-100 placeholder-slate-500 outline-none"
             />
             <Search size={14} className="absolute left-2.5 top-3 text-slate-400" />
@@ -303,20 +292,20 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
             </div>
           )}
 
-          {/* Coords indicator */}
+          {/* Coordinates & Timezone Info */}
           <div className="mt-1 flex items-center justify-between text-[10px] text-slate-400 px-1">
-            <span>अक्षांश: {selectedCoords.latitude}° N</span>
-            <span>देशांतर: {selectedCoords.longitude}° E</span>
-            <span>समय: UTC+{selectedCoords.timezone}</span>
+            <span>{selectedCoords.latitude}° N</span>
+            <span>{selectedCoords.longitude}° E</span>
+            <span>UTC+{selectedCoords.timezone}</span>
           </div>
         </div>
 
-        {/* Submit */}
+        {/* Submit Button */}
         <button
           type="submit"
-          className="form-gold-btn"
+          className="form-gold-btn mt-2"
         >
-          <span className="text-base">☸</span> {submitLabel}
+          <span className="text-base">☸</span> {submitLabel || t.formSubmit}
         </button>
       </form>
     </div>

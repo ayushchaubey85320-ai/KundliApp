@@ -16,20 +16,33 @@ import { DoshaCard } from './components/DoshaCard';
 import { KundliMilanView } from './components/KundliMilanView';
 import { SavedProfilesModal } from './components/SavedProfilesModal';
 import { MobileContainer } from './components/MobileContainer';
+import { LoginPage } from './components/LoginPage';
+import { HomePage } from './components/HomePage';
+import { dbService } from './services/dbService';
+import { AppUser, SavedKundliRecord } from './services/dbConfig';
+import { Language, TRANSLATIONS, VEDIC_RASHI_NAMES } from './i18n/translations';
 import { Edit3, BookmarkPlus, ArrowLeft } from 'lucide-react';
 
-const DEFAULT_PROFILE: BirthFormData = {
-  name: 'आयुष चौबे',
-  gender: 'Male',
-  date: '1998-08-15',
-  time: '06:30',
-  cityName: 'Auraiya, Uttar Pradesh',
-  latitude: 26.4674,
-  longitude: 79.5135,
-  timezoneOffset: 5.5,
-};
-
 export function App() {
+  // Authentication State
+  const [currentUser, setCurrentUser] = useState<AppUser | null>(() => dbService.getCurrentUser());
+
+  // Screen State: 'login' | 'home' | 'make_kundli' | 'match_kundli'
+  const [activeScreen, setActiveScreen] = useState<'login' | 'home' | 'make_kundli' | 'match_kundli'>(() => {
+    const user = dbService.getCurrentUser();
+    return user ? 'home' : 'login';
+  });
+
+  // Language State: 'hi' | 'en'
+  const [language, setLanguage] = useState<Language>(() => dbService.getLanguage());
+
+  const handleToggleLanguage = () => {
+    const nextLang = language === 'hi' ? 'en' : 'hi';
+    setLanguage(nextLang);
+    dbService.setLanguage(nextLang);
+  };
+
+  // Bottom Navigation in Chart Screen
   const [activeBottomNav, setActiveBottomNav] = useState<string>('chart');
   const [activeActionTab, setActiveActionTab] = useState<ActionTab | null>(null);
   const [selectedHouse, setSelectedHouse] = useState<number | null>(null);
@@ -37,253 +50,377 @@ export function App() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
 
-  // Current Birth Profile
-  const [birthData, setBirthData] = useState<BirthFormData>(() => {
+  // Saved Kundli Records (Starts completely clean - ZERO mock/predefined profiles)
+  const [savedRecords, setSavedRecords] = useState<SavedKundliRecord[]>(() => dbService.getSavedKundlis());
+
+  // Current Birth Profile for Make Kundli
+  const [birthData, setBirthData] = useState<BirthFormData | null>(() => {
     const local = localStorage.getItem('current_kundli_profile');
     if (local) {
       try {
         return JSON.parse(local);
       } catch (e) {
-        // fallback
+        return null;
       }
     }
-    return DEFAULT_PROFILE;
-  });
-
-  // Saved Profiles in localStorage
-  const [savedProfiles, setSavedProfiles] = useState<BirthFormData[]>(() => {
-    const local = localStorage.getItem('saved_kundli_profiles');
-    if (local) {
-      try {
-        return JSON.parse(local);
-      } catch (e) {
-        // fallback
-      }
-    }
-    return [
-      DEFAULT_PROFILE,
-      {
-        name: 'श्री रामलला (अयोध्या)',
-        gender: 'Male',
-        date: '2024-01-22',
-        time: '12:29',
-        cityName: 'Ayodhya, Uttar Pradesh',
-        latitude: 26.7922,
-        longitude: 82.1998,
-        timezoneOffset: 5.5,
-      },
-    ];
+    return null;
   });
 
   useEffect(() => {
-    localStorage.setItem('saved_kundli_profiles', JSON.stringify(savedProfiles));
-  }, [savedProfiles]);
-
-  useEffect(() => {
-    localStorage.setItem('current_kundli_profile', JSON.stringify(birthData));
+    if (birthData) {
+      localStorage.setItem('current_kundli_profile', JSON.stringify(birthData));
+    }
   }, [birthData]);
 
-  // Astrological Calculations
-  const kundli: KundliResult = calculateKundli(
-    birthData.name,
-    birthData.gender,
-    birthData.date,
-    birthData.time,
-    birthData.cityName,
-    birthData.latitude,
-    birthData.longitude,
-    birthData.timezoneOffset
-  );
+  // Handle Login and Skip
+  const handleLoginSuccess = (user: AppUser) => {
+    setCurrentUser(user);
+    setActiveScreen('home');
+  };
 
-  const moonPlanet = kundli.planets.find((p) => p.key === 'Moon') || kundli.planets[1];
-  const dasha: DashaOverview = calculateVimshottariDasha(moonPlanet, birthData.date, birthData.time);
-  const doshas: DoshaAnalysis = getFullDoshaAnalysis(kundli);
+  const handleSkipLogin = () => {
+    const guest = dbService.getCurrentUser();
+    setCurrentUser(guest);
+    setActiveScreen('home');
+  };
 
-  const handleSaveCurrent = () => {
-    const already = savedProfiles.find(
-      (p) => p.name === birthData.name && p.date === birthData.date && p.time === birthData.time
+  const handleLogout = () => {
+    dbService.logout();
+    setCurrentUser(null);
+    setActiveScreen('login');
+  };
+
+  // Convert SavedKundliRecord to BirthFormData for modal display
+  const savedProfilesForModal: BirthFormData[] = savedRecords.map((r) => ({
+    name: r.name,
+    gender: r.gender as any,
+    date: r.birthDate,
+    time: r.birthTime,
+    cityName: r.cityName,
+    latitude: r.latitude,
+    longitude: r.longitude,
+    timezoneOffset: r.timezoneOffset,
+  }));
+
+  const handleSaveCurrentKundli = () => {
+    if (!birthData) return;
+    const exists = savedRecords.some(
+      (r) => r.name === birthData.name && r.birthDate === birthData.date && r.birthTime === birthData.time
     );
-    if (already) {
-      alert('यह कुंडली पहले से सुरक्षित है।');
+    if (exists) {
+      alert(language === 'hi' ? 'यह कुंडली पहले से सुरक्षित है।' : 'This Kundli is already saved.');
       return;
     }
-    setSavedProfiles([birthData, ...savedProfiles]);
-    alert(`"${birthData.name}" की कुंडली सुरक्षित कर ली गई है।`);
+    dbService.saveKundli({
+      userId: currentUser?.id,
+      name: birthData.name,
+      gender: birthData.gender,
+      birthDate: birthData.date,
+      birthTime: birthData.time,
+      cityName: birthData.cityName,
+      latitude: birthData.latitude,
+      longitude: birthData.longitude,
+      timezoneOffset: birthData.timezoneOffset,
+    });
+    setSavedRecords(dbService.getSavedKundlis());
+    alert(
+      language === 'hi'
+        ? `"${birthData.name}" की कुंडली डेटाबेस में सुरक्षित कर ली गई है।`
+        : `"${birthData.name}" Kundli successfully saved to database.`
+    );
   };
 
   const handleDeleteProfile = (index: number) => {
-    const next = [...savedProfiles];
-    next.splice(index, 1);
-    setSavedProfiles(next);
+    const target = savedRecords[index];
+    if (target) {
+      dbService.deleteKundli(target.id);
+      setSavedRecords(dbService.getSavedKundlis());
+    }
   };
+
+  const handleDeleteSavedRecordById = (id: string) => {
+    dbService.deleteKundli(id);
+    setSavedRecords(dbService.getSavedKundlis());
+  };
+
+  const handleOpenSavedKundliRecord = (record: SavedKundliRecord) => {
+    setBirthData({
+      name: record.name,
+      gender: record.gender as any,
+      date: record.birthDate,
+      time: record.birthTime,
+      cityName: record.cityName,
+      latitude: record.latitude,
+      longitude: record.longitude,
+      timezoneOffset: record.timezoneOffset,
+    });
+    setActiveScreen('make_kundli');
+    setIsFormOpen(false);
+    setActiveActionTab(null);
+  };
+
+  // Astrological Calculations (Calculated only when birthData is present)
+  let kundli: KundliResult | null = null;
+  let dasha: DashaOverview | null = null;
+  let doshas: DoshaAnalysis | null = null;
+
+  if (birthData) {
+    kundli = calculateKundli(
+      birthData.name,
+      birthData.gender,
+      birthData.date,
+      birthData.time,
+      birthData.cityName,
+      birthData.latitude,
+      birthData.longitude,
+      birthData.timezoneOffset
+    );
+    const moonPlanet = kundli.planets.find((p) => p.key === 'Moon') || kundli.planets[1];
+    dasha = calculateVimshottariDasha(moonPlanet, birthData.date, birthData.time);
+    doshas = getFullDoshaAnalysis(kundli);
+  }
 
   const handleSelectActionTab = (tab: ActionTab) => {
     if (activeActionTab === tab) {
-      setActiveActionTab(null); // toggle off to view main chart
+      setActiveActionTab(null);
     } else {
       setActiveActionTab(tab);
     }
   };
 
+  const t = TRANSLATIONS[language];
+
   return (
     <MobileContainer
+      language={language}
+      onToggleLanguage={handleToggleLanguage}
+      currentUser={currentUser}
+      onOpenLogin={() => setActiveScreen('login')}
+      onLogout={handleLogout}
+      onGoHome={() => {
+        setActiveScreen('home');
+        setActiveActionTab(null);
+      }}
+      activeScreen={activeScreen}
       activeTab={activeBottomNav}
       onTabChange={(tabId) => {
         setActiveBottomNav(tabId);
         setActiveActionTab(null);
       }}
       onOpenSaved={() => setIsSavedModalOpen(true)}
-      onNewKundli={() => setIsFormOpen(true)}
+      onNewKundli={() => {
+        setActiveScreen('make_kundli');
+        setIsFormOpen(true);
+      }}
       onShareOrPrint={() => window.print()}
     >
-      {/* If Form is Open */}
-      {isFormOpen ? (
-        <div className="space-y-4">
-          <BirthDetailsForm
-            initialData={birthData}
-            onSubmit={(newData) => {
-              setBirthData(newData);
-              setIsFormOpen(false);
-              setActiveActionTab(null);
-            }}
-            formTitle="जन्म विवरण प्रविष्ट करें (New Birth Chart)"
-            submitLabel="कुंडली तैयार करें एवं देखें"
-          />
-          <button
-            onClick={() => setIsFormOpen(false)}
-            className="form-cancel-btn"
-          >
-            रद्द करें (Cancel)
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-2.5">
-          {/* Top Jatak Info Bar */}
-          <div className="bg-[#121824] p-3 rounded-2xl border border-amber-500/30 flex items-center justify-between select-none">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-amber-200">{birthData.name}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-semibold border border-amber-500/30">
-                  {kundli.lagna.rashi.nameHi} लग्न
-                </span>
-              </div>
-              <div className="text-[11px] text-slate-400 mt-0.5">
-                {birthData.date} • {birthData.time} | {birthData.cityName}
-              </div>
-            </div>
+      {/* 1. SCREEN: LOGIN PAGE */}
+      {activeScreen === 'login' && (
+        <LoginPage
+          language={language}
+          onLoginSuccess={handleLoginSuccess}
+          onSkip={handleSkipLogin}
+        />
+      )}
 
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={handleSaveCurrent}
-                className="p-1.5 rounded-xl bg-slate-800 hover:bg-amber-500/20 text-amber-300 border border-slate-700"
-                title="सुरक्षित करें"
-              >
-                <BookmarkPlus size={15} />
-              </button>
-              <button
-                onClick={() => setIsFormOpen(true)}
-                className="p-1.5 rounded-xl bg-slate-800 hover:bg-amber-500/20 text-amber-300 border border-slate-700"
-                title="विवरण बदलें"
-              >
-                <Edit3 size={15} />
-              </button>
-            </div>
-          </div>
+      {/* 2. SCREEN: HOME PAGE WITH 2 ACTION BUTTONS & PANDIT SHOWCASE */}
+      {activeScreen === 'home' && (
+        <HomePage
+          language={language}
+          onSelectMakeKundli={() => {
+            setActiveScreen('make_kundli');
+            if (!birthData) setIsFormOpen(true);
+          }}
+          onSelectMatchKundli={() => {
+            setActiveScreen('match_kundli');
+          }}
+          savedKundlis={savedRecords}
+          onOpenSavedKundli={handleOpenSavedKundliRecord}
+          onDeleteSavedKundli={handleDeleteSavedRecordById}
+        />
+      )}
 
-          {/* MAIN CHART SCREEN (Matching User's Reference Screenshot) */}
-          {activeActionTab === null && activeBottomNav === 'chart' && (
-            <div className="space-y-0">
-              {/* 1. North Indian Kundli Chart */}
-              <NorthIndianChart
-                houses={kundli.d1Houses}
-                lagnaData={{
-                  displayTag: kundli.lagna.displayTag,
-                  deg: kundli.lagna.deg,
-                  degSuperscript: kundli.lagna.degSuperscript,
+      {/* 3. SCREEN: DEDICATED SEPARATED MATCH KUNDALI (36 GUNA MILAN) */}
+      {activeScreen === 'match_kundli' && (
+        <KundliMilanView
+          language={language}
+          onBackToHome={() => setActiveScreen('home')}
+        />
+      )}
+
+      {/* 4. SCREEN: DEDICATED SEPARATED MAKE KUNDALI */}
+      {activeScreen === 'make_kundli' && (
+        <div>
+          {/* If no profile yet or edit form requested */}
+          {(!birthData || isFormOpen) ? (
+            <div className="space-y-4">
+              <BirthDetailsForm
+                initialData={birthData || undefined}
+                language={language}
+                onLanguageChange={(lang) => {
+                  setLanguage(lang);
+                  dbService.setLanguage(lang);
                 }}
-                onSelectHouse={(hNum) => setSelectedHouse(hNum)}
-                selectedHouse={selectedHouse}
+                onSubmit={(newData) => {
+                  setBirthData(newData);
+                  setIsFormOpen(false);
+                  setActiveActionTab(null);
+                }}
+                formTitle={language === 'hi' ? '१. जन्म कुंडली निर्माण' : '1. Make Janam Kundli'}
+                submitLabel={language === 'hi' ? 'कुंडली तैयार करें एवं देखें' : 'Generate & View Kundli'}
               />
-
-              {/* 2. Peach Status Legend Bar */}
-              <ChartLegend />
-
-              {/* 3. Six-Button Navigation Action Grid */}
-              <NavigationGrid
-                activeTab={activeActionTab as any}
-                onSelectTab={handleSelectActionTab}
-              />
-            </div>
-          )}
-
-          {/* DETAIL VIEWS TRIGGERED BY THE 6 ACTION BUTTONS */}
-          {activeActionTab !== null && (
-            <div className="space-y-3">
-              {/* Back to Chart Button */}
-              <button
-                onClick={() => setActiveActionTab(null)}
-                className="py-1.5 px-3 rounded-xl bg-slate-800 text-amber-300 border border-slate-700 text-xs flex items-center gap-1.5 hover:bg-slate-700 transition-colors"
-              >
-                <ArrowLeft size={14} /> मुख्य कुंडली चार्ट पर वापस लौटें
-              </button>
-
-              {/* 1. Graha (Planetary Details) */}
-              {activeActionTab === 'graha' && <PlanetaryTable kundli={kundli} />}
-
-              {/* 2. Dasha (Vimshottari Dasha) */}
-              {activeActionTab === 'dasha' && <DashaView dasha={dasha} />}
-
-              {/* 3. Phaladesh (Yogas & Jataka Parijata Analysis) */}
-              {activeActionTab === 'phaladesh' && <PhaladeshView kundli={kundli} />}
-
-              {/* 4. KP (Krishnamurti Padhdhati) */}
-              {activeActionTab === 'kp' && <KPView kundli={kundli} />}
-
-              {/* 5. Shodashvarga (16 Divisional Charts) */}
-              {activeActionTab === 'shodashvarga' && (
-                <ShodashvargaView
-                  kundli={kundli}
-                  onSelectHouse={(hNum) => setSelectedHouse(hNum)}
-                />
+              {birthData && (
+                <button
+                  onClick={() => setIsFormOpen(false)}
+                  className="form-cancel-btn"
+                >
+                  {t.formCancel}
+                </button>
               )}
+            </div>
+          ) : (
+            kundli && dasha && doshas && (
+              <div className="space-y-2.5">
+                {/* Back to Home button */}
+                <button
+                  onClick={() => setActiveScreen('home')}
+                  className="py-1 px-3 rounded-xl bg-slate-800 text-amber-300 border border-slate-700 text-xs flex items-center gap-1.5 hover:bg-slate-700 transition-colors mb-1"
+                >
+                  <ArrowLeft size={13} /> {language === 'hi' ? 'मुख्य पृष्ठ (Home)' : 'Home'}
+                </button>
 
-              {/* 6. Lal Kitab / Doshas & Milan */}
-              {activeActionTab === 'lalkitab' && (
-                <div className="space-y-4">
-                  <DoshaCard doshas={doshas} />
-                  <KundliMilanView />
+                {/* Top Jatak Info Header Card */}
+                <div className="bg-[#121824] p-3 rounded-2xl border border-amber-500/30 flex items-center justify-between select-none">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-amber-200">{birthData.name}</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-semibold border border-amber-500/30">
+                        {language === 'hi'
+                          ? `${kundli.lagna.rashi.nameHi} लग्न`
+                          : `${VEDIC_RASHI_NAMES[kundli.lagna.rashi.id]?.en || kundli.lagna.rashi.nameEn} Lagna`}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 mt-0.5">
+                      {birthData.date} • {birthData.time} | {birthData.cityName.split(',')[0]}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={handleSaveCurrentKundli}
+                      className="p-1.5 rounded-xl bg-slate-800 hover:bg-amber-500/20 text-amber-300 border border-slate-700"
+                      title="सुरक्षित करें"
+                    >
+                      <BookmarkPlus size={15} />
+                    </button>
+                    <button
+                      onClick={() => setIsFormOpen(true)}
+                      className="p-1.5 rounded-xl bg-slate-800 hover:bg-amber-500/20 text-amber-300 border border-slate-700"
+                      title="विवरण बदलें"
+                    >
+                      <Edit3 size={15} />
+                    </button>
+                  </div>
                 </div>
-              )}
 
-              {/* Always keep the 6 Action buttons accessible at bottom */}
-              <NavigationGrid
-                activeTab={activeActionTab}
-                onSelectTab={handleSelectActionTab}
-              />
-            </div>
-          )}
+                {/* MAIN CHART SCREEN (D1 Lagna View) */}
+                {activeActionTab === null && activeBottomNav === 'chart' && (
+                  <div className="space-y-0">
+                    <NorthIndianChart
+                      houses={kundli.d1Houses}
+                      lagnaData={{
+                        displayTag: kundli.lagna.displayTag,
+                        deg: kundli.lagna.deg,
+                        degSuperscript: kundli.lagna.degSuperscript,
+                      }}
+                      onSelectHouse={(hNum) => setSelectedHouse(hNum)}
+                      selectedHouse={selectedHouse}
+                    />
 
-          {/* OTHER BOTTOM NAV TABS (if clicked directly) */}
-          {activeBottomNav === 'planets' && activeActionTab === null && (
-            <PlanetaryTable kundli={kundli} />
-          )}
-          {activeBottomNav === 'dasha' && activeActionTab === null && (
-            <DashaView dasha={dasha} />
-          )}
-          {activeBottomNav === 'doshas' && activeActionTab === null && (
-            <DoshaCard doshas={doshas} />
-          )}
-          {activeBottomNav === 'milan' && activeActionTab === null && (
-            <KundliMilanView />
-          )}
+                    {/* Status Legend Bar */}
+                    <ChartLegend />
 
-          {/* House Detail Modal when any house is tapped */}
-          {selectedHouse !== null && (
-            <HouseDetailModal
-              houseData={kundli.d1Houses[selectedHouse - 1]}
-              allPlanets={kundli.planets}
-              onClose={() => setSelectedHouse(null)}
-            />
+                    {/* Six-Button Navigation Action Grid */}
+                    <NavigationGrid
+                      activeTab={activeActionTab as any}
+                      onSelectTab={handleSelectActionTab}
+                    />
+                  </div>
+                )}
+
+                {/* DETAIL VIEWS TRIGGERED BY THE 6 ACTION BUTTONS */}
+                {activeActionTab !== null && (
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => setActiveActionTab(null)}
+                      className="py-1.5 px-3 rounded-xl bg-slate-800 text-amber-300 border border-slate-700 text-xs flex items-center gap-1.5 hover:bg-slate-700 transition-colors"
+                    >
+                      <ArrowLeft size={14} /> {language === 'hi' ? 'मुख्य लग्न कुंडली पर वापस लौटें' : 'Back to Main Lagna Chart'}
+                    </button>
+
+                    {/* 1. Graha (Planetary Details) */}
+                    {activeActionTab === 'graha' && <PlanetaryTable kundli={kundli} />}
+
+                    {/* 2. Dasha (Vimshottari Dasha) */}
+                    {activeActionTab === 'dasha' && <DashaView dasha={dasha} />}
+
+                    {/* 3. Phaladesh (Yogas & Jataka Parijata Analysis) */}
+                    {activeActionTab === 'phaladesh' && <PhaladeshView kundli={kundli} />}
+
+                    {/* 4. KP (Krishnamurti Padhdhati) */}
+                    {activeActionTab === 'kp' && <KPView kundli={kundli} />}
+
+                    {/* 5. Shodashvarga (Detailed Individual Pages for D1 to D16 Charts) */}
+                    {activeActionTab === 'shodashvarga' && (
+                      <ShodashvargaView
+                        kundli={kundli}
+                        language={language}
+                        onSelectHouse={(hNum) => setSelectedHouse(hNum)}
+                      />
+                    )}
+
+                    {/* 6. Doshas */}
+                    {activeActionTab === 'lalkitab' && (
+                      <div className="space-y-4">
+                        <DoshaCard doshas={doshas} />
+                      </div>
+                    )}
+
+                    {/* Always keep 6 buttons available below */}
+                    <NavigationGrid
+                      activeTab={activeActionTab}
+                      onSelectTab={handleSelectActionTab}
+                    />
+                  </div>
+                )}
+
+                {/* Bottom Navigation Direct Tabs */}
+                {activeBottomNav === 'planets' && activeActionTab === null && (
+                  <PlanetaryTable kundli={kundli} />
+                )}
+                {activeBottomNav === 'dasha' && activeActionTab === null && (
+                  <DashaView dasha={dasha} />
+                )}
+                {activeBottomNav === 'doshas' && activeActionTab === null && (
+                  <DoshaCard doshas={doshas} />
+                )}
+                {activeBottomNav === 'milan' && activeActionTab === null && (
+                  <KundliMilanView
+                    language={language}
+                    onBackToHome={() => setActiveScreen('home')}
+                  />
+                )}
+
+                {/* House Detail Modal */}
+                {selectedHouse !== null && (
+                  <HouseDetailModal
+                    houseData={kundli.d1Houses[selectedHouse - 1]}
+                    allPlanets={kundli.planets}
+                    onClose={() => setSelectedHouse(null)}
+                  />
+                )}
+              </div>
+            )
           )}
         </div>
       )}
@@ -291,15 +428,17 @@ export function App() {
       {/* Saved Profiles Modal */}
       {isSavedModalOpen && (
         <SavedProfilesModal
-          savedProfiles={savedProfiles}
+          savedProfiles={savedProfilesForModal}
           onSelectProfile={(p) => {
             setBirthData(p);
+            setActiveScreen('make_kundli');
             setIsFormOpen(false);
             setActiveActionTab(null);
           }}
           onDeleteProfile={handleDeleteProfile}
           onClose={() => setIsSavedModalOpen(false)}
           onNewProfile={() => {
+            setActiveScreen('make_kundli');
             setIsFormOpen(true);
             setIsSavedModalOpen(false);
           }}
