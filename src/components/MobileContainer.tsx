@@ -52,16 +52,17 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
   const isGuest = !currentUser || currentUser.isGuest;
 
   return (
-    <div className="min-h-screen bg-[#06080F] text-slate-100 flex flex-col items-center justify-start w-full selection:bg-amber-500 selection:text-black">
+    <div className="min-h-screen bg-[#06080F] text-slate-100 flex flex-col items-center justify-start w-full selection:bg-amber-500 selection:text-black" style={{ width: '100%', minHeight: '100vh' }}>
       {/* Main Container: Native full-screen on mobile devices, centered on desktop */}
-      <div className="w-full max-w-md min-h-screen flex flex-col bg-[#0A0E1A] shadow-2xl relative">
-        {/* App Header Bar - SINGLE AND ONLY OFFICIAL LOGO */}
-        <header className="sticky top-0 z-40 bg-[#0A0E1A]/95 backdrop-blur-md border-b border-amber-500/20 px-3.5 py-2.5">
-          <div className="flex items-center justify-between">
-            {/* Logo with USER-PROVIDED RED OM IMAGE */}
+      <div className="w-full max-w-md min-h-screen flex flex-col bg-[#0A0E1A] shadow-2xl relative" style={{ width: '100%', maxWidth: '448px', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        {/* App Header Bar - STRICT 100% FULL WIDTH WITH SPACE-BETWEEN */}
+        <header className="app-header-bar" style={{ width: '100%', boxSizing: 'border-box' }}>
+          <div className="app-header-content w-full" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', boxSizing: 'border-box' }}>
+            {/* Left: Logo with USER-PROVIDED RED OM IMAGE */}
             <div
               onClick={onGoHome}
-              className="flex items-center gap-2.5 cursor-pointer select-none group"
+              style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', userSelect: 'none' }}
+              className="group"
             >
               <div className="app-header-logo-box group-hover:scale-105 transition-transform" style={{ width: '36px', height: '36px', minWidth: '36px', minHeight: '36px' }}>
                 <img
@@ -72,33 +73,35 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
                 />
               </div>
               <div>
-                <h1 className="text-base font-extrabold text-amber-200 font-serif tracking-wide leading-tight">
+                <h1 style={{ fontSize: '16px', fontWeight: 800, color: '#FDE68A', fontFamily: 'Cinzel, Georgia, serif', lineHeight: 1.2, margin: 0 }}>
                   VedicKundli
                 </h1>
-                <p className="text-[10px] text-amber-300/85 font-medium">
-                  मार्गदर्शन: <span className="text-amber-100 font-semibold">पं. संजय चौबे</span>
+                <p style={{ fontSize: '11px', color: 'rgba(252, 211, 77, 0.85)', fontWeight: 500, margin: 0 }}>
+                  मार्गदर्शन: <span style={{ color: '#FEF3C7', fontWeight: 600 }}>पं. संजय चौबे</span>
                 </p>
               </div>
             </div>
 
-            {/* Right Header Controls: Language Switch + Contact + Login/Profile */}
-            <div className="flex items-center gap-1.5">
+            {/* Right: Contact + Language Switch + Login/Profile */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               {/* Quick Call Icon Button */}
               <a
                 href="tel:+918979838449"
                 className="p-1.5 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-500/30 flex items-center justify-center transition-all"
+                style={{ padding: '6px 8px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 title="पं. संजय चौबे जी को कॉल करें (+91 89798 38449)"
               >
-                <PhoneCall size={13} />
+                <PhoneCall size={14} />
               </a>
 
               {/* Language Switcher */}
               <button
                 onClick={onToggleLanguage}
                 className="px-2 py-1 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-amber-300 text-[11px] font-bold border border-amber-500/25 flex items-center gap-1 transition-all"
+                style={{ padding: '5px 8px', borderRadius: '10px', fontSize: '11.5px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}
                 title="भाषा बदलें (Switch Language)"
               >
-                <Globe size={12} className="text-amber-400" />
+                <Globe size={13} className="text-amber-400" />
                 <span>{language === 'hi' ? 'ENG' : 'हिन्दी'}</span>
               </button>
 
@@ -107,6 +110,7 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
                 <button
                   onClick={onOpenLogin}
                   className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 text-xs font-bold shadow-md shadow-amber-500/20 flex items-center gap-1 transition-all active:scale-95"
+                  style={{ padding: '6px 10px', borderRadius: '10px', fontSize: '12px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '4px', background: 'linear-gradient(135deg, #F59E0B, #EAB308)', color: '#090D17' }}
                 >
                   <LogIn size={13} />
                   <span>{t.loginBtn}</span>
@@ -154,11 +158,11 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
         </header>
 
         {/* Scrollable Main Content */}
-        <main className="flex-1 p-3.5 sm:p-4 overflow-y-auto">{children}</main>
+        <main className="flex-1 p-3.5 sm:p-4 overflow-y-auto w-full" style={{ width: '100%', boxSizing: 'border-box' }}>{children}</main>
 
-        {/* Bottom Navigation Bar */}
+        {/* Bottom Navigation Bar - MATCHES HEADER 100% FULL WIDTH */}
         {activeScreen !== 'login' && (
-          <footer className="sticky bottom-0 z-30 bg-[#0A0E1A]/96 backdrop-blur-md border-t border-amber-500/20 px-3 py-2 flex items-center justify-around text-xs">
+          <footer className="bottom-nav-bar" style={{ width: '100%', boxSizing: 'border-box' }}>
             <button
               onClick={onGoHome}
               className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all ${
