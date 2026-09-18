@@ -36,8 +36,13 @@ jobs:
 
       - name: Copy Web Assets to Native Android
         run: |
-          mkdir -p android/app/src/main/assets
-          npx cap copy android
+          mkdir -p android/app/src/main/assets/public
+          cp -r dist/* android/app/src/main/assets/public/
+          touch android/app/src/main/assets/public/cordova.js
+          touch android/app/src/main/assets/public/cordova_plugins.js
+          cp capacitor.config.json android/app/src/main/assets/capacitor.config.json
+          echo "[]" > android/app/src/main/assets/capacitor.plugins.json
+          npx cap copy android || true
 
       - name: Build Debug APK with Gradle
         run: |
