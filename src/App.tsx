@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { App as CapApp } from '@capacitor/app';
 import { calculateKundli, KundliResult } from './astrology/kundliEngine';
 import { calculateVimshottariDasha, DashaOverview } from './astrology/dashaEngine';
 import { getFullDoshaAnalysis, DoshaAnalysis } from './astrology/doshaEngine';
@@ -56,6 +57,60 @@ export function App() {
 
   // Current Birth Profile - ALWAYS starts NULL so user enters details fresh!
   const [birthData, setBirthData] = useState<BirthFormData | null>(null);
+
+  // Hardware/System Android Back Button Handler: Back 1 step instead of exiting
+  useEffect(() => {
+    let handler: any = null;
+    try {
+      CapApp.addListener('backButton', () => {
+        // 1. Close open modals or drawers
+        if (isSavedModalOpen) {
+          setIsSavedModalOpen(false);
+          return;
+        }
+        if (selectedHouse !== null) {
+          setSelectedHouse(null);
+          return;
+        }
+        if (activeActionTab !== null) {
+          setActiveActionTab(null);
+          return;
+        }
+        if (isFormOpen) {
+          setIsFormOpen(false);
+          return;
+        }
+
+        // 2. If in make_kundli and showing calculated chart -> back to form
+        if (activeScreen === 'make_kundli' && birthData !== null) {
+          setBirthData(null);
+          return;
+        }
+
+        // 3. If in any subscreen -> back to home
+        if (activeScreen === 'make_kundli' || activeScreen === 'match_kundli' || activeScreen === 'pandit_profile') {
+          setActiveScreen('home');
+          return;
+        }
+
+        // 4. If already on home or login -> exit/minimize app cleanly
+        if (activeScreen === 'home' || activeScreen === 'login') {
+          CapApp.exitApp();
+          return;
+        }
+      }).then((h) => {
+        handler = h;
+      });
+    } catch (e) {
+      console.warn('CapApp listener init fallback', e);
+    }
+
+    return () => {
+      if (handler && typeof handler.remove === 'function') {
+        handler.remove();
+      }
+    };
+  }, [isSavedModalOpen, selectedHouse, activeActionTab, isFormOpen, activeScreen, birthData]);
 
   // Handle Login and Skip
   const handleLoginSuccess = (user: AppUser) => {

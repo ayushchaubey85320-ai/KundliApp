@@ -449,18 +449,22 @@ select, select option {
    ========================================================================== */
 
 .bottom-nav-bar {
-  position: sticky;
-  bottom: 0;
-  z-index: 40;
-  background: rgba(10, 14, 26, 0.96) !important;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid rgba(212, 175, 55, 0.22);
-  padding: 0.45rem 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  width: 100%;
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 40 !important;
+  background: rgba(10, 14, 26, 0.98) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-top: 1px solid rgba(212, 175, 55, 0.22) !important;
+  padding-top: 8px !important;
+  padding-bottom: max(10px, env(safe-area-inset-bottom, 0px)) !important;
+  padding-left: max(8px, env(safe-area-inset-left, 0px)) !important;
+  padding-right: max(8px, env(safe-area-inset-right, 0px)) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-around !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .bottom-nav-tab {
@@ -533,7 +537,10 @@ select, select option {
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
   border-bottom: 1px solid rgba(212, 175, 55, 0.22) !important;
-  padding: 0.65rem 1rem !important;
+  padding-top: max(10px, env(safe-area-inset-top, 0px)) !important;
+  padding-bottom: 10px !important;
+  padding-left: max(12px, env(safe-area-inset-left, 0px)) !important;
+  padding-right: max(12px, env(safe-area-inset-right, 0px)) !important;
   box-sizing: border-box !important;
 }
 
