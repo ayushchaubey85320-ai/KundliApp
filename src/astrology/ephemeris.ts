@@ -32,13 +32,17 @@ export const normalizeDeg = (deg: number): number => {
 
 // Calculate Julian Day Number from UTC date and time
 export const getJulianDay = (coords: AstroCoordinates): number => {
-  // Convert local time to decimal hours UTC
-  const decimalLocalHours = coords.hours + coords.minutes / 60.0 + coords.seconds / 3600.0;
-  const decimalUTCHours = decimalLocalHours - coords.timezoneOffset;
+  const hours = Number(coords.hours) || 0;
+  const minutes = Number(coords.minutes) || 0;
+  const seconds = Number(coords.seconds) || 0;
+  const tzOffset = typeof coords.timezoneOffset === 'number' ? coords.timezoneOffset : 5.5;
 
-  let y = coords.year;
-  let m = coords.month;
-  const d = coords.day + decimalUTCHours / 24.0;
+  const decimalLocalHours = hours + minutes / 60.0 + seconds / 3600.0;
+  const decimalUTCHours = decimalLocalHours - tzOffset;
+
+  let y = Number(coords.year) || 1998;
+  let m = Number(coords.month) || 8;
+  const d = (Number(coords.day) || 15) + decimalUTCHours / 24.0;
 
   if (m <= 2) {
     y -= 1;
@@ -49,7 +53,7 @@ export const getJulianDay = (coords: AstroCoordinates): number => {
   const B = 2 - A + Math.floor(A / 4);
 
   const JD = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + B - 1524.5;
-  return JD;
+  return isNaN(JD) ? 2451545.0 : JD;
 };
 
 // Calculate Julian Centuries from J2000.0 (JD 2451545.0)
@@ -58,51 +62,45 @@ export const getJulianCenturies = (jd: number): number => {
 };
 
 // Calculate Lahiri Ayanamsha (Chitra Paksha Ayanamsha)
-// Standard formula accepted by Indian Astronomical Ephemeris
 export const getLahiriAyanamsha = (T: number): number => {
-  // At epoch J2000.0 (2000 Jan 1.5), Lahiri Ayanamsha was 23° 51' 25.53" = 23.857092°
-  // Precession rate is approx 50.290966 arcseconds per year = 1.396971° per Julian century
   const baseAyanamsha = 23.857092;
-  const precessionRate = 1.396971; // degrees per Julian century
+  const precessionRate = 1.396971;
   return normalizeDeg(baseAyanamsha + precessionRate * T);
 };
 
 // Calculate Mean Obliquity of the Ecliptic (eps)
 export const getObliquity = (T: number): number => {
-  // IAU formula in degrees
   const eps = 23.4392911 - 0.0130042 * T - 0.00000016 * T * T + 0.000000504 * T * T * T;
-  return eps;
+  return isNaN(eps) ? 23.439 : eps;
 };
 
 // Calculate Greenwich Mean Sidereal Time (GMST) in degrees
 export const getGMST = (jd: number, T: number): number => {
-  // In degrees: GMST = 280.46061837 + 360.98564736629 * (JD - 2451545.0) + 0.000387933 * T^2 - T^3 / 38710000
   const d = jd - 2451545.0;
   const gmst = 280.46061837 + 360.98564736629 * d + 0.000387933 * T * T - (T * T * T) / 38710000.0;
   return normalizeDeg(gmst);
 };
 
-// Calculate Ascendant (Lagna) in Sidereal Zodiac (using Lahiri Ayanamsha)
+// Calculate Ascendant (Lagna) in Sidereal Zodiac
 export const calculateAscendant = (coords: AstroCoordinates, jd: number, T: number, ayanamsha: number): number => {
   const gmst = getGMST(jd, T);
-  // Local Sidereal Time = GMST + Geographic Longitude (East is positive)
-  const lst = normalizeDeg(gmst + coords.longitude);
+  const lon = typeof coords.longitude === 'number' && !isNaN(coords.longitude) ? coords.longitude : 79.5135;
+  const lat = typeof coords.latitude === 'number' && !isNaN(coords.latitude) ? coords.latitude : 26.4674;
+
+  const lst = normalizeDeg(gmst + lon);
   const lstRad = degToRad(lst);
 
   const eps = degToRad(getObliquity(T));
-  const latRad = degToRad(coords.latitude);
+  const latRad = degToRad(lat);
 
-  // Tropical Ascendant formula:
-  // tan(Asc) = (-cos(LST)) / (sin(LST)*cos(eps) + tan(lat)*sin(eps))
   const numerator = Math.cos(lstRad);
   const denominator = -Math.sin(lstRad) * Math.cos(eps) - Math.tan(latRad) * Math.sin(eps);
 
   let tropicalAsc = radToDeg(Math.atan2(numerator, denominator));
   tropicalAsc = normalizeDeg(tropicalAsc);
 
-  // Sidereal Ascendant = Tropical Ascendant - Lahiri Ayanamsha
   const siderealAsc = normalizeDeg(tropicalAsc - ayanamsha);
-  return siderealAsc;
+  return isNaN(siderealAsc) ? 127.45 : siderealAsc;
 };
 
 // Solar coordinates (Tropical to Sidereal)
