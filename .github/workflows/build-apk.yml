@@ -44,6 +44,11 @@ jobs:
           echo "[]" > android/app/src/main/assets/capacitor.plugins.json
           npx cap copy android || true
 
+      - name: Accept Android SDK Licenses
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" || true
+
       - name: Build Debug APK with Gradle
         run: |
           cd android
