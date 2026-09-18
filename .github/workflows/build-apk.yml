@@ -34,8 +34,8 @@ jobs:
       - name: Grant Execute Permission for Gradlew
         run: chmod +x android/gradlew
 
-      - name: Sync Native Android
-        run: npx cap sync android
+      - name: Copy Web Assets to Native Android
+        run: npx cap copy android
 
       - name: Build Debug APK with Gradle
         run: |
