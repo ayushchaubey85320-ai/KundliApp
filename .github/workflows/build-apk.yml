@@ -31,11 +31,11 @@ jobs:
       - name: Build Web Assets
         run: npm run build
 
-      - name: Sync Native Android
-        run: npx cap sync android
-
       - name: Grant Execute Permission for Gradlew
         run: chmod +x android/gradlew
+
+      - name: Sync Native Android
+        run: npx cap sync android
 
       - name: Build Debug APK with Gradle
         run: |
