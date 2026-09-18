@@ -1,5 +1,4 @@
-import React from 'react';
-import { Award, Star, Compass, PhoneCall, Sparkles } from 'lucide-react';
+import { Award, Star, PhoneCall, Sparkles, MessageCircle } from 'lucide-react';
 
 interface PanditProfileCardProps {
   compact?: boolean;
@@ -8,9 +7,8 @@ interface PanditProfileCardProps {
 export const PanditProfileCard: React.FC<PanditProfileCardProps> = ({ compact = false }) => {
   return (
     <div className="relative overflow-hidden rounded-3xl border border-amber-500/40 bg-gradient-to-b from-[#161C2C] via-[#0F1422] to-[#0A0D17] p-4 sm:p-5 shadow-[0_10px_35px_rgba(0,0,0,0.5)]">
-      {/* Decorative Aura / Background Glow */}
+      {/* Decorative Golden Light */}
       <div className="absolute -top-16 -right-16 w-36 h-36 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
-      <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-orange-600/10 rounded-full blur-2xl pointer-events-none" />
 
       {/* Top Header Badge */}
       <div className="flex items-center justify-between mb-3">
@@ -27,12 +25,15 @@ export const PanditProfileCard: React.FC<PanditProfileCardProps> = ({ compact = 
         </div>
       </div>
 
-      {/* Pandit Ji's Identity & Introduction */}
+      {/* Pandit Ji's Identity & Introduction with Om Logo */}
       <div className="flex items-start gap-3.5 mb-3.5">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-600 via-yellow-500 to-amber-300 p-0.5 shadow-lg shadow-amber-500/20 shrink-0">
-          <div className="w-full h-full bg-[#111625] rounded-[14px] flex items-center justify-center text-2xl font-bold text-amber-300">
-            🕉️
-          </div>
+        <div className="pandit-badge-om-box" style={{ width: '46px', height: '46px', minWidth: '46px', minHeight: '46px' }}>
+          <img
+            src="/om_logo.png"
+            alt="Om"
+            className="pandit-badge-om-img"
+            style={{ width: '32px', height: '32px', maxWidth: '32px', maxHeight: '32px', objectFit: 'contain' }}
+          />
         </div>
         <div>
           <h2 className="text-base sm:text-lg font-bold text-amber-100 font-serif leading-tight">
@@ -41,9 +42,12 @@ export const PanditProfileCard: React.FC<PanditProfileCardProps> = ({ compact = 
           <p className="text-xs text-amber-300/90 font-medium mt-0.5">
             वैदिक ज्योतिष, षोडशवर्ग चक्र एवं वास्तु मर्मज्ञ
           </p>
-          <p className="text-[11px] text-slate-300 mt-1">
-            30+ वर्षों का सतत अनुसंधान एवं सहस्रों जन्मपत्रियों का सटीक शास्त्रीय फलादेश
-          </p>
+          <a
+            href="tel:+918979838449"
+            className="text-xs text-amber-400 font-mono font-bold mt-1 inline-block hover:underline"
+          >
+            संपर्क: +91 89798 38449
+          </a>
         </div>
       </div>
 
@@ -57,15 +61,15 @@ export const PanditProfileCard: React.FC<PanditProfileCardProps> = ({ compact = 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px] text-slate-300">
             <div className="flex items-center gap-1.5">
               <span className="text-amber-400">❖</span>
-              <span>सटीक जन्मपत्री एवं षोडशवर्ग (D1-D16) चक्र</span>
+              <span>सटीक जन्मपत्री एवं षोडशवर्ग चक्र</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-amber-400">❖</span>
-              <span>36 गुण अष्टकूट मिलान व नाड़ी/भकूट दोष उपाय</span>
+              <span>36 गुण अष्टकूट मिलान व दोष उपाय</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-amber-400">❖</span>
-              <span>विंशोत्तरी महादशा, गोचर व राजयोग विश्लेषण</span>
+              <span>विंशोत्तरी महादशा व राजयोग विचार</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-amber-400">❖</span>
@@ -75,7 +79,7 @@ export const PanditProfileCard: React.FC<PanditProfileCardProps> = ({ compact = 
         </div>
       )}
 
-      {/* Traditional Shloka / Vedic Quote */}
+      {/* Traditional Shloka */}
       <div className="bg-amber-950/20 border border-amber-500/20 rounded-xl p-2.5 my-2.5 text-center">
         <p className="text-[11px] text-amber-200/90 font-serif italic">
           “यथा शिखा मयूराणां नागानां मणयो यथा।<br />
@@ -83,21 +87,25 @@ export const PanditProfileCard: React.FC<PanditProfileCardProps> = ({ compact = 
         </p>
       </div>
 
-      {/* Consultation Action Footer */}
-      <div className="flex items-center justify-between pt-1">
-        <div className="text-[11px] text-slate-400 flex items-center gap-1">
-          <Compass size={13} className="text-amber-400" />
-          <span>पवित्र वैदिक परंपरा एवं प्रामाणिक मार्गदर्शन</span>
-        </div>
-        <button
-          onClick={() => {
-            alert('पूज्य पं. संजय चौबे जी से व्यक्तिगत परामर्श हेतु संपर्क सूत्र शीघ्र उपलब्ध कराया जाएगा।');
-          }}
-          className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-all shadow-md shadow-amber-500/20 flex items-center gap-1"
+      {/* Direct Call & WhatsApp Action Buttons */}
+      <div className="grid grid-cols-2 gap-2 pt-1">
+        <a
+          href="tel:+918979838449"
+          className="py-2 px-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition-all shadow-md shadow-amber-500/20 flex items-center justify-center gap-1"
         >
-          <PhoneCall size={12} />
-          <span>परामर्श लें</span>
-        </button>
+          <PhoneCall size={13} />
+          <span>कॉल करें</span>
+        </a>
+
+        <a
+          href="https://wa.me/918979838449?text=%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A4%A3%E0%A4%BE%E0%A4%AE%20%E0%A4%AA%E0%A4%82.%20%E0%A4%B8%E0%A4%82%E0%A4%9C%E0%A4%AF%20%E0%A4%9A%E0%A5%8C%E0%A4%AC%E0%A5%87%20%E0%A4%9C%E0%A5%80,%20%E0%A4%AE%E0%A5%81%E0%A4%9D%E0%A5%87%20%E0%A4%95%E0%A5%81%E0%A4%82%E0%A4%A1%E0%A4%B2%E0%A5%80%20%E0%A4%B5%20%E0%A4%9C%E0%A5%8D%E0%A4%AF%E0%A5%8B%E0%A4%A4%E0%A4%BF%E0%A4%B7%20%E0%A4%AA%E0%A4%B0%E0%A4%BE%E0%A4%AE%E0%A4%B0%E0%A5%8D%E0%A4%Parse%E0%A4%B9%E0%A5%87%E0%A4%A4%E0%A5%81%20%E0%A4%AE%E0%A4%BE%E0%A4%B0%E0%A5%8D%E0%A4%97%E0%A4%A6%E0%A4%B0%E0%A5%8D%E0%A4%B6%E0%A4%A8%20%E0%A4%9A%E0%A4%BE%E0%A4%B9%E0%A4%BF%E0%A4%8F%E0%A5%A4"
+          target="_blank"
+          rel="noreferrer"
+          className="py-2 px-2.5 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-500/40 text-xs font-bold transition-all flex items-center justify-center gap-1"
+        >
+          <MessageCircle size={13} className="text-emerald-400" />
+          <span>व्हाट्सएप</span>
+        </a>
       </div>
     </div>
   );

@@ -76,13 +76,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({ language, onLoginSuccess, 
 
   return (
     <div className="min-h-[75vh] flex flex-col justify-center items-center px-4 py-6 max-w-[390px] mx-auto text-center space-y-5 animate-in fade-in duration-300">
-      {/* Refined Spiritual Emblem */}
+      {/* Refined Spiritual Emblem with User Om Logo */}
       <div className="relative">
-        <div className="absolute inset-0 bg-amber-500/20 rounded-full blur-2xl" />
-        <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-200 p-0.5 shadow-xl shadow-amber-500/25 flex items-center justify-center mx-auto">
-          <div className="w-full h-full bg-[#0B0F1A] rounded-[14px] flex items-center justify-center text-3xl">
-            🕉️
-          </div>
+        <div className="login-om-box" style={{ width: '68px', height: '68px', minWidth: '68px', minHeight: '68px' }}>
+          <img
+            src="/om_logo.png"
+            alt="VedicKundli Om Logo"
+            className="login-om-img"
+            style={{ width: '48px', height: '48px', maxWidth: '48px', maxHeight: '48px', objectFit: 'contain' }}
+          />
         </div>
       </div>
 

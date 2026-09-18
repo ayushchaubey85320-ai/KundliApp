@@ -43,6 +43,96 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Strict Global Image Constraints */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Strict Dedicated App Logo Classes */
+.app-header-logo-box {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+  max-width: 36px !important;
+  max-height: 36px !important;
+  border-radius: 12px;
+  background: #101524;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 4px !important;
+  flex-shrink: 0 !important;
+  overflow: hidden !important;
+}
+
+.app-header-logo-img {
+  width: 26px !important;
+  height: 26px !important;
+  max-width: 26px !important;
+  max-height: 26px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.login-om-box {
+  width: 68px !important;
+  height: 68px !important;
+  min-width: 68px !important;
+  min-height: 68px !important;
+  max-width: 68px !important;
+  max-height: 68px !important;
+  border-radius: 20px;
+  background: #0E1322;
+  border: 1.5px solid rgba(212, 175, 55, 0.45);
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 8px !important;
+  margin: 0 auto !important;
+  overflow: hidden !important;
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.2);
+}
+
+.login-om-img {
+  width: 48px !important;
+  height: 48px !important;
+  max-width: 48px !important;
+  max-height: 48px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.pandit-badge-om-box {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  max-width: 40px !important;
+  max-height: 40px !important;
+  border-radius: 12px;
+  background: #0A0E18;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 5px !important;
+  flex-shrink: 0 !important;
+  overflow: hidden !important;
+}
+
+.pandit-badge-om-img {
+  width: 28px !important;
+  height: 28px !important;
+  max-width: 28px !important;
+  max-height: 28px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
 /* Strict Button Reset - Absolute zero default white background */
 button {
   background: transparent;

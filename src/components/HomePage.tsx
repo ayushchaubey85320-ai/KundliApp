@@ -87,8 +87,13 @@ export const HomePage: React.FC<HomePageProps> = ({
           className="action-card-pandit group"
         >
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 p-0.5 flex items-center justify-center text-xl text-amber-300 shrink-0">
-              🕉️
+            <div className="pandit-badge-om-box" style={{ width: '40px', height: '40px', minWidth: '40px', minHeight: '40px' }}>
+              <img
+                src="/om_logo.png"
+                alt="Om"
+                className="pandit-badge-om-img"
+                style={{ width: '28px', height: '28px', maxWidth: '28px', maxHeight: '28px', objectFit: 'contain' }}
+              />
             </div>
             <div>
               <div className="flex items-center gap-1.5">

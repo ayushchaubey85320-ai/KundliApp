@@ -74,7 +74,6 @@ export const ShodashvargaView: React.FC<ShodashvargaViewProps> = ({
   language = 'hi',
   onSelectHouse,
 }) => {
-  // Key divisional charts requested: D1 to D16
   const keyVargas = SHODASHVARGAS.filter((v) =>
     ['D1', 'D2', 'D3', 'D4', 'D7', 'D9', 'D10', 'D12', 'D16'].includes(v.key)
   );
@@ -90,33 +89,40 @@ export const ShodashvargaView: React.FC<ShodashvargaViewProps> = ({
   };
 
   return (
-    <div className="space-y-4 max-w-[430px] mx-auto pb-4">
-      {/* Top Header & Selector */}
-      <div className="bg-[#101524] p-3 rounded-2xl border border-amber-500/30">
-        <div className="flex items-center justify-between mb-2">
+    <div className="space-y-4 w-full max-w-[430px] mx-auto pb-4 overflow-hidden">
+      {/* Top Header & Horizontal Selector - Constrained 100% inside card with no overflow */}
+      <div className="w-full max-w-full bg-[#101524] p-3.5 rounded-3xl border border-amber-500/30 overflow-hidden shadow-lg">
+        <div className="flex items-center justify-between mb-2 px-0.5">
           <div className="flex items-center gap-2">
             <Sparkles size={15} className="text-amber-400" />
             <h3 className="text-xs font-bold text-amber-200">
               {language === 'hi' ? 'षोडशवर्ग चक्र (D1 से D16)' : 'Shodashvarga Divisional Charts (D1-D16)'}
             </h3>
           </div>
-          <span className="text-[10px] text-amber-300 font-semibold px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/30">
+          <span className="text-[10px] text-amber-300 font-bold px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/30">
             {selectedVarga.key}
           </span>
         </div>
 
-        {/* Scrollable Pills for D1 to D16 */}
-        <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+        {/* Scrollable Pills for D1 to D16 (Strict width constraints to prevent screen overflow) */}
+        <div
+          className="w-full max-w-full overflow-x-auto pb-2 flex items-center gap-1.5"
+          style={{
+            maxWidth: '100%',
+            overflowX: 'auto',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
           {keyVargas.map((v) => {
             const isSelected = selectedVarga.key === v.key;
             return (
               <button
                 key={v.key}
                 onClick={() => setSelectedVarga(v)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all border ${
+                className={`shrink-0 px-2.5 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all border ${
                   isSelected
-                    ? 'bg-amber-500 text-slate-950 font-bold border-amber-400 shadow-md shadow-amber-500/20 scale-105'
-                    : 'bg-slate-800/90 text-slate-300 border-slate-700 hover:bg-slate-700'
+                    ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md shadow-amber-500/25'
+                    : 'bg-[#090D17] text-slate-300 border-slate-700/80 hover:bg-slate-800'
                 }`}
               >
                 {v.key} • {language === 'hi' ? v.nameHi : v.nameEn}
@@ -127,7 +133,7 @@ export const ShodashvargaView: React.FC<ShodashvargaViewProps> = ({
       </div>
 
       {/* Selected Varga Highlights Card */}
-      <div className="bg-slate-900/90 border border-amber-500/25 rounded-2xl p-3.5 space-y-2">
+      <div className="bg-[#0F1424] border border-amber-500/25 rounded-3xl p-3.5 space-y-2 shadow-lg">
         <div className="flex items-center justify-between">
           <div>
             <h4 className="text-sm font-bold text-amber-200">
@@ -137,19 +143,19 @@ export const ShodashvargaView: React.FC<ShodashvargaViewProps> = ({
               {language === 'hi' ? interpretation.focusHi : interpretation.focusEn}
             </p>
           </div>
-          <div className="text-right">
-            <span className="text-[10px] text-slate-400 block">विभाजन (Division)</span>
+          <div className="text-right shrink-0">
+            <span className="text-[10px] text-slate-400 block">विभाजन</span>
             <span className="text-xs font-bold text-amber-400">1/{selectedVarga.division} भाग</span>
           </div>
         </div>
 
-        <p className="text-xs text-slate-300 leading-relaxed pt-1 border-t border-slate-800">
+        <p className="text-xs text-slate-300 leading-relaxed pt-1.5 border-t border-slate-800">
           {language === 'hi' ? interpretation.hi : interpretation.en}
         </p>
       </div>
 
       {/* Full North Indian Chart SVG for this Varga */}
-      <div className="bg-[#0B0E17] rounded-2xl border border-slate-800 p-2 shadow-lg">
+      <div className="bg-[#080B14] rounded-3xl border border-slate-800 p-2 shadow-xl overflow-hidden">
         <div className="text-center py-1 text-xs font-bold text-amber-300">
           {language === 'hi'
             ? `${selectedVarga.nameHi} चक्र रेखाचित्र (North Indian Diagram)`
@@ -167,7 +173,7 @@ export const ShodashvargaView: React.FC<ShodashvargaViewProps> = ({
       </div>
 
       {/* Planetary Placements in this Varga */}
-      <div className="bg-slate-900/80 rounded-2xl border border-slate-800 p-3 space-y-2">
+      <div className="bg-[#0F1424] rounded-3xl border border-slate-800 p-3.5 space-y-2.5 shadow-lg">
         <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300">
           <BookOpen size={14} className="text-amber-400" />
           <span>
@@ -188,7 +194,7 @@ export const ShodashvargaView: React.FC<ShodashvargaViewProps> = ({
               return (
                 <div
                   key={p.key + '-' + selectedVarga.key}
-                  className="bg-slate-800/80 border border-slate-700/60 rounded-xl p-2 text-left"
+                  className="bg-[#090D17] border border-slate-800 rounded-2xl p-2 text-left"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-amber-200">{planetName}</span>

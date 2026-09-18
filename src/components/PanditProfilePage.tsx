@@ -1,4 +1,5 @@
-import { ArrowLeft, Award, Star, PhoneCall, Sparkles, CheckCircle2 } from 'lucide-react';
+import React from 'react';
+import { ArrowLeft, Award, Star, PhoneCall, Sparkles, CheckCircle2, MessageCircle } from 'lucide-react';
 import { Language } from '../i18n/translations';
 
 interface PanditProfilePageProps {
@@ -22,11 +23,14 @@ export const PanditProfilePage: React.FC<PanditProfilePageProps> = ({ onBack }) 
         {/* Decorative Golden Aura */}
         <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Gold Avatar Emblem */}
-        <div className="relative mx-auto w-24 h-24 rounded-full bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-200 p-1 shadow-xl shadow-amber-500/30 mb-3">
-          <div className="w-full h-full bg-[#0B0E17] rounded-full flex items-center justify-center text-4xl shadow-inner">
-            🕉️
-          </div>
+        {/* User-provided Red Om Logo Emblem */}
+        <div className="login-om-box mb-3" style={{ width: '68px', height: '68px', minWidth: '68px', minHeight: '68px' }}>
+          <img
+            src="/om_logo.png"
+            alt="VedicKundli Om"
+            className="login-om-img"
+            style={{ width: '48px', height: '48px', maxWidth: '48px', maxHeight: '48px', objectFit: 'contain' }}
+          />
         </div>
 
         {/* Title & Honorifics */}
@@ -55,6 +59,48 @@ export const PanditProfilePage: React.FC<PanditProfilePageProps> = ({ onBack }) 
           <Star size={14} fill="currentColor" />
           <Star size={14} fill="currentColor" />
           <span className="text-xs text-slate-400 font-bold ml-1.5">(4.9/5 • 10,000+ परामर्श)</span>
+        </div>
+      </div>
+
+      {/* DIRECT CONTACT & BOOKING ACTION BOX */}
+      <div className="bg-gradient-to-r from-amber-500/15 via-[#101524] to-emerald-500/15 border border-amber-500/40 rounded-3xl p-4 text-center space-y-3 shadow-xl">
+        <div className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-300">
+          <PhoneCall size={14} className="text-amber-400" />
+          <span>सीधा संपर्क एवं परामर्श सूत्र</span>
+        </div>
+
+        <div className="bg-[#0A0D17] border border-slate-800 rounded-2xl p-3 text-center space-y-1">
+          <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">
+            पं. संजय चौबे का आधिकारिक मोबाइल नंबर:
+          </span>
+          <a
+            href="tel:+918979838449"
+            className="text-lg font-black text-amber-300 hover:text-amber-200 tracking-wider font-mono block"
+          >
+            +91 89798 38449
+          </a>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+          {/* Direct Call Button */}
+          <a
+            href="tel:+918979838449"
+            className="btn-gold-primary text-xs py-3"
+          >
+            <PhoneCall size={14} />
+            <span>कॉल करें (+91 89798 38449)</span>
+          </a>
+
+          {/* Direct WhatsApp Button */}
+          <a
+            href="https://wa.me/918979838449?text=%E0%A4%AA%E0%A5%8D%E0%A4%B0%E0%A4%A3%E0%A4%BE%E0%A4%AE%20%E0%A4%AA%E0%A4%82.%20%E0%A4%B8%E0%A4%82%E0%A4%9C%E0%A4%AF%20%E0%A4%9A%E0%A5%8C%E0%A4%AC%E0%A5%87%20%E0%A4%9C%E0%A5%80,%20%E0%A4%AE%E0%A5%81%E0%A4%9D%E0%A5%87%20%E0%A4%95%E0%A5%81%E0%A4%82%E0%A4%A1%E0%A4%B2%E0%A5%80%20%E0%A4%B5%20%E0%A4%9C%E0%A5%8D%E0%A4%AF%E0%A5%8B%E0%A4%A4%E0%A4%BF%E0%A4%B7%20%E0%A4%AA%E0%A4%B0%E0%A4%BE%E0%A4%AE%E0%A4%B0%E0%A5%8D%E0%A4%Parse%E0%A4%B9%E0%A5%87%E0%A4%A4%E0%A5%81%20%E0%A4%AE%E0%A4%BE%E0%A4%B0%E0%A5%8D%E0%A4%97%E0%A4%A6%E0%A4%B0%E0%A5%8D%E0%A4%B6%E0%A4%A8%20%E0%A4%9A%E0%A4%BE%E0%A4%B9%E0%A4%BF%E0%A4%8F%E0%A5%A4"
+            target="_blank"
+            rel="noreferrer"
+            className="btn-secondary text-xs py-3 border-emerald-500/40 text-emerald-300 hover:bg-emerald-950/30"
+          >
+            <MessageCircle size={14} className="text-emerald-400" />
+            <span>व्हाट्सएप संदेश भेजें</span>
+          </a>
         </div>
       </div>
 
@@ -117,25 +163,6 @@ export const PanditProfilePage: React.FC<PanditProfilePageProps> = ({ onBack }) 
         <p className="text-[10px] text-slate-400 pt-1">
           — वेदांग ज्योतिष (जिस प्रकार मयूरों में शिखा और नागों में मणि का स्थान सर्वोच्च है, उसी प्रकार समस्त वेदों में ज्योतिष शास्त्र शिरोधार्य है।)
         </p>
-      </div>
-
-      {/* Consultation & Booking Action Box */}
-      <div className="bg-gradient-to-r from-amber-500/15 via-yellow-500/15 to-amber-500/15 border border-amber-500/40 rounded-3xl p-4 text-center space-y-2">
-        <div className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-300">
-          <PhoneCall size={14} className="text-amber-400" />
-          <span>व्यक्तिगत ज्योतिष परामर्श हेतु संपर्क करें</span>
-        </div>
-        <p className="text-xs text-slate-300">
-          जन्मपत्री निर्माण, विवाह मिलान अथवा वास्तु परीक्षण हेतु पं. संजय चौबे जी से व्यक्तिगत मार्गदर्शन प्राप्त करें।
-        </p>
-        <button
-          onClick={() => {
-            alert('पूज्य पं. संजय चौबे जी से व्यक्तिगत परामर्श हेतु संपर्क सूत्र शीघ्र सक्रिय कर दिया जाएगा।');
-          }}
-          className="btn-gold-primary mt-2"
-        >
-          <PhoneCall size={15} /> परामर्श एवं समय आरक्षित करें (Book Consultation)
-        </button>
       </div>
     </div>
   );

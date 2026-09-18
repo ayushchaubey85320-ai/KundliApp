@@ -12,6 +12,7 @@ import {
   Home,
   Globe,
   Award,
+  PhoneCall,
 } from 'lucide-react';
 
 interface MobileContainerProps {
@@ -55,10 +56,10 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
 
   return (
     <div className="min-h-screen bg-[#06080F] text-slate-100 flex flex-col items-center justify-start p-0 sm:p-4 selection:bg-amber-500 selection:text-black">
-      {/* Top Desktop Controls Bar */}
-      <div className="w-full max-w-md hidden sm:flex items-center justify-between py-2 px-1 text-xs text-slate-400">
+      {/* Top Desktop Controls Bar (No duplicate logo) */}
+      <div className="w-full max-w-md hidden sm:flex items-center justify-between py-1.5 px-2 text-xs text-slate-400">
         <div className="flex items-center gap-1.5">
-          <span className="text-amber-400 font-bold tracking-wide">🕉️ {t.appTitle}</span>
+          <span className="text-amber-400 font-bold tracking-wide">VedicKundli</span>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -80,18 +81,21 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
             : 'max-w-4xl rounded-2xl border border-slate-800 my-4'
         }`}
       >
-        {/* App Header Bar */}
+        {/* App Header Bar - SINGLE AND ONLY OFFICIAL LOGO */}
         <header className="sticky top-0 z-40 bg-[#0A0E1A]/95 backdrop-blur-md border-b border-amber-500/20 px-3.5 py-2.5">
           <div className="flex items-center justify-between">
-            {/* Logo & Home Click */}
+            {/* Logo with USER-PROVIDED RED OM IMAGE */}
             <div
               onClick={onGoHome}
               className="flex items-center gap-2.5 cursor-pointer select-none group"
             >
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-200 p-0.5 shadow-md shadow-amber-500/25 group-hover:scale-105 transition-transform shrink-0">
-                <div className="w-full h-full bg-[#080B14] rounded-[10px] flex items-center justify-center text-lg font-bold text-amber-300">
-                  🕉️
-                </div>
+              <div className="app-header-logo-box group-hover:scale-105 transition-transform" style={{ width: '36px', height: '36px', minWidth: '36px', minHeight: '36px' }}>
+                <img
+                  src="/om_logo.png"
+                  alt="VedicKundli Om Logo"
+                  className="app-header-logo-img"
+                  style={{ width: '26px', height: '26px', maxWidth: '26px', maxHeight: '26px', objectFit: 'contain' }}
+                />
               </div>
               <div>
                 <h1 className="text-base font-extrabold text-amber-200 font-serif tracking-wide leading-tight">
@@ -103,8 +107,17 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
               </div>
             </div>
 
-            {/* Right Header Controls: Language Switch + Login/Profile */}
+            {/* Right Header Controls: Language Switch + Contact + Login/Profile */}
             <div className="flex items-center gap-1.5">
+              {/* Quick Call Icon Button */}
+              <a
+                href="tel:+918979838449"
+                className="p-1.5 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-500/30 flex items-center justify-center transition-all"
+                title="पं. संजय चौबे जी को कॉल करें (+91 89798 38449)"
+              >
+                <PhoneCall size={13} />
+              </a>
+
               {/* Language Switcher */}
               <button
                 onClick={onToggleLanguage}
@@ -171,7 +184,7 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
 
         {/* Bottom Navigation Bar */}
         {activeScreen !== 'login' && (
-          <footer className="sticky bottom-0 z-30 bg-[#0A0E1A]/95 backdrop-blur-md border-t border-amber-500/20 px-3 py-2 flex items-center justify-around text-xs">
+          <footer className="sticky bottom-0 z-30 bg-[#0A0E1A]/96 backdrop-blur-md border-t border-amber-500/20 px-3 py-2 flex items-center justify-around text-xs">
             <button
               onClick={onGoHome}
               className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl transition-all ${
@@ -223,7 +236,7 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
 
       {/* Footer Branding */}
       <footer className="py-2 text-center text-[11px] text-slate-500">
-        वैदिक ज्योतिष अनुसंधान एवं परामर्श संस्थान • पं. संजय चौबे
+        वैदिक ज्योतिष अनुसंधान एवं परामर्श संस्थान • पं. संजय चौबे (+91 89798 38449)
       </footer>
     </div>
   );
