@@ -151,7 +151,7 @@ export function App() {
           />
           <button
             onClick={() => setIsFormOpen(false)}
-            className="w-full py-2 rounded-xl border border-slate-700 bg-slate-800 text-xs text-slate-300 hover:text-white"
+            className="form-cancel-btn"
           >
             रद्द करें (Cancel)
           </button>

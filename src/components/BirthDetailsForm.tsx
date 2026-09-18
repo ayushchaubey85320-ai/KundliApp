@@ -314,9 +314,9 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
         {/* Submit */}
         <button
           type="submit"
-          className="w-full py-3 px-4 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-400 hover:to-amber-600 text-slate-950 font-bold rounded-xl shadow-lg shadow-amber-500/20 active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-xs sm:text-sm tracking-wide"
+          className="form-gold-btn"
         >
-          <span>☸</span> {submitLabel}
+          <span className="text-base">☸</span> {submitLabel}
         </button>
       </form>
     </div>

@@ -103,24 +103,20 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
         <main className="flex-1 p-3.5 pb-24 overflow-y-auto">{children}</main>
 
         {/* Bottom Navigation Bar */}
-        <nav className="sticky bottom-0 z-40 bg-[#0A0D15]/95 backdrop-blur-lg border-t border-amber-500/20 px-2 py-1.5 flex items-center justify-around">
+        <nav className="bottom-nav-bar">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
-                className={`flex-1 py-1.5 px-1 rounded-xl flex flex-col items-center justify-center transition-all ${
-                  isActive
-                    ? 'text-amber-300 font-bold scale-105'
-                    : 'text-slate-400 hover:text-slate-200 font-medium opacity-80'
-                }`}
+                className={`bottom-nav-tab ${isActive ? 'active' : ''}`}
               >
-                <span className={`text-base leading-none mb-1 ${isActive ? 'text-amber-400' : ''}`}>
+                <span className="tab-icon">
                   {item.icon}
                 </span>
-                <span className="text-[10px] leading-tight">{item.label}</span>
-                <span className="text-[8.5px] text-slate-400 opacity-60 leading-none">
+                <span className="tab-title">{item.label}</span>
+                <span className="tab-subtitle">
                   {item.subLabel}
                 </span>
               </button>
