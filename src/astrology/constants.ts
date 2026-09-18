@@ -79,6 +79,7 @@ export interface PlanetDef {
   key: string;
   nameEn: string;
   nameHi: string;
+  shortCode: string; // Exact Hindi glyph for chart: सू, च, मं, etc.
   abbr: string;
   symbol: string;
   dashaYears: number;
@@ -87,20 +88,20 @@ export interface PlanetDef {
   debilitatedSign: number;
   debilitatedDegree: number;
   ownSigns: number[];
-  color: string;
+  chartColor: string; // Vibrant color matching classical chart screenshot
   isBenefic: boolean;
 }
 
 export const PLANETS: PlanetDef[] = [
-  { key: 'Sun', nameEn: 'Sun', nameHi: 'सूर्य', abbr: 'Su', symbol: '☉', dashaYears: 6, exaltedSign: 1, exaltedDegree: 10, debilitatedSign: 7, debilitatedDegree: 10, ownSigns: [5], color: '#F59E0B', isBenefic: true },
-  { key: 'Moon', nameEn: 'Moon', nameHi: 'चन्द्र', abbr: 'Mo', symbol: '☽', dashaYears: 10, exaltedSign: 2, exaltedDegree: 3, debilitatedSign: 8, debilitatedDegree: 3, ownSigns: [4], color: '#E2E8F0', isBenefic: true },
-  { key: 'Mars', nameEn: 'Mars', nameHi: 'मंगल', abbr: 'Ma', symbol: '♂', dashaYears: 7, exaltedSign: 10, exaltedDegree: 28, debilitatedSign: 4, debilitatedDegree: 28, ownSigns: [1, 8], color: '#EF4444', isBenefic: false },
-  { key: 'Mercury', nameEn: 'Mercury', nameHi: 'बुध', abbr: 'Me', symbol: '☿', dashaYears: 17, exaltedSign: 6, exaltedDegree: 15, debilitatedSign: 12, debilitatedDegree: 15, ownSigns: [3, 6], color: '#10B981', isBenefic: true },
-  { key: 'Jupiter', nameEn: 'Jupiter', nameHi: 'बृहस्पति (गुरु)', abbr: 'Ju', symbol: '♃', dashaYears: 16, exaltedSign: 4, exaltedDegree: 5, debilitatedSign: 10, debilitatedDegree: 5, ownSigns: [9, 12], color: '#FBBF24', isBenefic: true },
-  { key: 'Venus', nameEn: 'Venus', nameHi: 'शुक्र', abbr: 'Ve', symbol: '♀', dashaYears: 20, exaltedSign: 12, exaltedDegree: 27, debilitatedSign: 6, debilitatedDegree: 27, ownSigns: [2, 7], color: '#EC4899', isBenefic: true },
-  { key: 'Saturn', nameEn: 'Saturn', nameHi: 'शनि', abbr: 'Sa', symbol: '♄', dashaYears: 19, exaltedSign: 7, exaltedDegree: 20, debilitatedSign: 1, debilitatedDegree: 20, ownSigns: [10, 11], color: '#6366F1', isBenefic: false },
-  { key: 'Rahu', nameEn: 'Rahu', nameHi: 'राहु', abbr: 'Ra', symbol: '☊', dashaYears: 18, exaltedSign: 2, exaltedDegree: 20, debilitatedSign: 8, debilitatedDegree: 20, ownSigns: [11], color: '#8B5CF6', isBenefic: false },
-  { key: 'Ketu', nameEn: 'Ketu', nameHi: 'केतु', abbr: 'Ke', symbol: '☋', dashaYears: 7, exaltedSign: 8, exaltedDegree: 20, debilitatedSign: 2, debilitatedDegree: 20, ownSigns: [8], color: '#D97706', isBenefic: false },
+  { key: 'Sun', nameEn: 'Sun', nameHi: 'सूर्य', shortCode: 'सू', abbr: 'Su', symbol: '☉', dashaYears: 6, exaltedSign: 1, exaltedDegree: 10, debilitatedSign: 7, debilitatedDegree: 10, ownSigns: [5], chartColor: '#EF4444', isBenefic: true },
+  { key: 'Moon', nameEn: 'Moon', nameHi: 'चन्द्र', shortCode: 'च', abbr: 'Mo', symbol: '☽', dashaYears: 10, exaltedSign: 2, exaltedDegree: 3, debilitatedSign: 8, debilitatedDegree: 3, ownSigns: [4], chartColor: '#DC2626', isBenefic: true },
+  { key: 'Mars', nameEn: 'Mars', nameHi: 'मंगल', shortCode: 'मं', abbr: 'Ma', symbol: '♂', dashaYears: 7, exaltedSign: 10, exaltedDegree: 28, debilitatedSign: 4, debilitatedDegree: 28, ownSigns: [1, 8], chartColor: '#10B981', isBenefic: false },
+  { key: 'Mercury', nameEn: 'Mercury', nameHi: 'बुध', shortCode: 'बु', abbr: 'Me', symbol: '☿', dashaYears: 17, exaltedSign: 6, exaltedDegree: 15, debilitatedSign: 12, debilitatedDegree: 15, ownSigns: [3, 6], chartColor: '#38BDF8', isBenefic: true },
+  { key: 'Jupiter', nameEn: 'Jupiter', nameHi: 'बृहस्पति', shortCode: 'गु', abbr: 'Ju', symbol: '♃', dashaYears: 16, exaltedSign: 4, exaltedDegree: 5, debilitatedSign: 10, debilitatedDegree: 5, ownSigns: [9, 12], chartColor: '#C084FC', isBenefic: true },
+  { key: 'Venus', nameEn: 'Venus', nameHi: 'शुक्र', shortCode: 'शु', abbr: 'Ve', symbol: '♀', dashaYears: 20, exaltedSign: 12, exaltedDegree: 27, debilitatedSign: 6, debilitatedDegree: 27, ownSigns: [2, 7], chartColor: '#4ADE80', isBenefic: true },
+  { key: 'Saturn', nameEn: 'Saturn', nameHi: 'शनि', shortCode: 'श', abbr: 'Sa', symbol: '♄', dashaYears: 19, exaltedSign: 7, exaltedDegree: 20, debilitatedSign: 1, debilitatedDegree: 20, ownSigns: [10, 11], chartColor: '#F97316', isBenefic: false },
+  { key: 'Rahu', nameEn: 'Rahu', nameHi: 'राहु', shortCode: 'रा', abbr: 'Ra', symbol: '☊', dashaYears: 18, exaltedSign: 2, exaltedDegree: 20, debilitatedSign: 8, debilitatedDegree: 20, ownSigns: [11], chartColor: '#FBBF24', isBenefic: false },
+  { key: 'Ketu', nameEn: 'Ketu', nameHi: 'केतु', shortCode: 'के', abbr: 'Ke', symbol: '☋', dashaYears: 7, exaltedSign: 8, exaltedDegree: 20, debilitatedSign: 2, debilitatedDegree: 20, ownSigns: [8], chartColor: '#F59E0B', isBenefic: false },
 ];
 
 export const DASHA_ORDER = ['Ketu', 'Venus', 'Sun', 'Moon', 'Mars', 'Rahu', 'Jupiter', 'Saturn', 'Mercury'];
@@ -128,4 +129,32 @@ export const BHAVAS: BhavaInfo[] = [
   { houseNumber: 10, nameHi: 'कर्म भाव (व्यवसाय/कीर्ति)', nameEn: 'Karma Bhava', karaka: 'Sun / Mercury', karakaHi: 'सूर्य/बुध', significanceEn: 'Career, Profession, Fame, Social Status, Authority', significanceHi: 'कर्म, आजीविका, प्रतिष्ठा, मान-सम्मान, पदोन्नति, पिता' },
   { houseNumber: 11, nameHi: 'लाभ भाव (आय/मित्र)', nameEn: 'Labha Bhava', karaka: 'Jupiter', karakaHi: 'बृहस्पति', significanceEn: 'Gains, Income, Elder Siblings, Desires, Social Network', significanceHi: 'आय, लाभ, बड़े भाई-बहन, इच्छा पूर्ति, मित्र मंडली' },
   { houseNumber: 12, nameHi: 'व्यय भाव (मोक्ष/विदेश)', nameEn: 'Vyaya Bhava', karaka: 'Saturn', karakaHi: 'शनि', significanceEn: 'Expenditures, Foreign Lands, Losses, Spirituality, Moksha, Sleep', significanceHi: 'व्यय, विदेश यात्रा, मोक्ष, अस्पताल, दान, शय्या सुख' },
+];
+
+// Shodashvarga (16 Divisional Charts in Jataka Parijata)
+export interface VargaDef {
+  key: string;
+  division: number;
+  nameHi: string;
+  nameEn: string;
+  purposeHi: string;
+}
+
+export const SHODASHVARGAS: VargaDef[] = [
+  { key: 'D1', division: 1, nameHi: 'लग्न / राशि', nameEn: 'Rashi (D1)', purposeHi: 'शरीर, व्यक्तित्व व संपूर्ण जीवन' },
+  { key: 'D2', division: 2, nameHi: 'होरा', nameEn: 'Hora (D2)', purposeHi: 'धन, संपत्ति व वित्तीय स्थिति' },
+  { key: 'D3', division: 3, nameHi: 'द्रेष्काण', nameEn: 'Drekkana (D3)', purposeHi: 'भाई-बहन, पराक्रम व ऊर्जा' },
+  { key: 'D4', division: 4, nameHi: 'चतुर्थांश', nameEn: 'Chaturthamsha (D4)', purposeHi: 'भूमि, भवन, वाहन व अचल संपत्ति' },
+  { key: 'D7', division: 7, nameHi: 'सप्तांश', nameEn: 'Saptamsha (D7)', purposeHi: 'संतान, वंश वृद्धि व सुख' },
+  { key: 'D9', division: 9, nameHi: 'नवमांश', nameEn: 'Navamsha (D9)', purposeHi: 'दांपत्य, भाग्य व आंतरिक बल' },
+  { key: 'D10', division: 10, nameHi: 'दशांश', nameEn: 'Dashamsha (D10)', purposeHi: 'कर्म, पद, प्रतिष्ठा व व्यापार' },
+  { key: 'D12', division: 12, nameHi: 'द्वादशांश', nameEn: 'Dwadashamsha (D12)', purposeHi: 'माता-पिता व पूर्वज' },
+  { key: 'D16', division: 16, nameHi: 'षोडशांश', nameEn: 'Shodashamsha (D16)', purposeHi: 'वाहन, सुख व यात्राएं' },
+  { key: 'D20', division: 20, nameHi: 'विंशांश', nameEn: 'Vimshamsha (D20)', purposeHi: 'उपासना, भक्ति व आध्यात्मिक बल' },
+  { key: 'D24', division: 24, nameHi: 'चतुर्विंशांश', nameEn: 'Chaturvimshamsha (D24)', purposeHi: 'विद्या, बुद्धि व ज्ञान' },
+  { key: 'D27', division: 27, nameHi: 'सप्तविंशांश', nameEn: 'Saptavimshamsha (D27)', purposeHi: 'शारीरिक सामर्थ्य व बल' },
+  { key: 'D30', division: 30, nameHi: 'त्रिंशांश', nameEn: 'Trimshamsha (D30)', purposeHi: 'अरिष्ट, कष्ट व चरित्र' },
+  { key: 'D40', division: 40, nameHi: 'खवेदांश', nameEn: 'Khavedamsha (D40)', purposeHi: 'शुभ-अशुभ फल' },
+  { key: 'D45', division: 45, nameHi: 'अक्षवेदांश', nameEn: 'Akshavedamsha (D45)', purposeHi: 'चरित्र शुद्धि व आचार' },
+  { key: 'D60', division: 60, nameHi: 'षष्ट्यंश', nameEn: 'Shashtiamsha (D60)', purposeHi: 'पूर्व जन्म के संचित कर्म व सूक्ष्म फल' },
 ];

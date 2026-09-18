@@ -5,6 +5,8 @@ export interface CalculatedPlanet {
   key: string;
   nameEn: string;
   nameHi: string;
+  shortCode: string; // e.g. सू, च, मं, बु, गु, शु, श, रा, के
+  chartColor: string; // e.g. #EF4444
   abbr: string;
   symbol: string;
   longitude: number; // total sidereal 0-360
@@ -13,11 +15,15 @@ export interface CalculatedPlanet {
   deg: number;
   min: number;
   sec: number;
+  degSuperscript: string; // e.g. "⁰⁴", "¹³", "²⁷"
   nakshatra: Nakshatra;
   pada: number; // 1 to 4
   speed: number;
   isRetrograde: boolean;
   isCombust: boolean;
+  isVargottama: boolean;
+  statusSymbols: string; // e.g. "*▫", "^", "↑", "↓"
+  displayTag: string; // e.g. "मं▫²⁷", "रा*▫¹⁵", "च¹³"
   d1House: number; // 1 to 12
   d9Rashi: Rashi; // Navamsha Rashi
   d9House: number; // Navamsha House from D9 Lagna
@@ -45,19 +51,45 @@ export interface KundliResult {
   ayanamsha: number;
   julianDay: number;
   lagna: {
+    shortCode: 'ल';
     longitude: number;
     rashi: Rashi;
     deg: number;
     min: number;
     sec: number;
+    degSuperscript: string;
+    displayTag: string; // e.g. "ल⁰⁴"
     nakshatra: Nakshatra;
     pada: number;
     d9Rashi: Rashi;
+    isVargottama: boolean;
   };
   planets: CalculatedPlanet[];
   d1Houses: HouseData[];
   d9Houses: HouseData[];
 }
+
+// Convert numbers 0-9 to superscript Unicode characters
+const SUPERSCRIPTS: Record<string, string> = {
+  '0': '⁰',
+  '1': '¹',
+  '2': '²',
+  '3': '³',
+  '4': '⁴',
+  '5': '⁵',
+  '6': '⁶',
+  '7': '⁷',
+  '8': '⁸',
+  '9': '⁹',
+};
+
+export const toSuperscript = (num: number): string => {
+  const padded = num < 10 ? `0${num}` : `${num}`;
+  return padded
+    .split('')
+    .map((ch) => SUPERSCRIPTS[ch] || ch)
+    .join('');
+};
 
 // Convert 0-30 decimal degrees to deg, min, sec
 export const toDMS = (deg: number) => {
@@ -74,7 +106,7 @@ export const getNavamshaRashiId = (totalLongitude: number): number => {
   const degInRashi = totalLongitude % 30;
   const padaInRashi = Math.floor(degInRashi / (3 + 20 / 60)); // 0 to 8
 
-  let startNavamsha = 1; // Default Aries
+  let startNavamsha = 1;
   const fireSigns = [1, 5, 9];
   const earthSigns = [2, 6, 10];
   const airSigns = [3, 7, 11];
@@ -94,8 +126,26 @@ export const getNavamshaRashiId = (totalLongitude: number): number => {
   return finalNavamsha;
 };
 
+// Generic Divisional Chart (Varga) Rashi Calculator for Shodashvarga
+export const getVargaRashiId = (totalLongitude: number, division: number): number => {
+  if (division === 1) return Math.floor(totalLongitude / 30) + 1;
+  if (division === 9) return getNavamshaRashiId(totalLongitude);
+
+  const rashiId = Math.floor(totalLongitude / 30) + 1;
+  const degInRashi = totalLongitude % 30;
+  const partSize = 30 / division;
+  const partIndex = Math.floor(degInRashi / partSize);
+
+  // General harmonic division
+  return (((rashiId - 1) * division + partIndex) % 12) + 1;
+};
+
 // Calculate planetary dignity
-const getPlanetDignity = (def: PlanetDef, rashiId: number, _degInRashi: number): { dignity: 'Exalted' | 'Debilitated' | 'Own Sign' | 'Friendly' | 'Neutral' | 'Enemy'; dignityHi: string } => {
+const getPlanetDignity = (
+  def: PlanetDef,
+  rashiId: number,
+  _degInRashi: number
+): { dignity: 'Exalted' | 'Debilitated' | 'Own Sign' | 'Friendly' | 'Neutral' | 'Enemy'; dignityHi: string } => {
   if (rashiId === def.exaltedSign) {
     return { dignity: 'Exalted', dignityHi: 'उच्च' };
   }
@@ -106,15 +156,14 @@ const getPlanetDignity = (def: PlanetDef, rashiId: number, _degInRashi: number):
     return { dignity: 'Own Sign', dignityHi: 'स्वक्षेत्री' };
   }
 
-  // Simplified Vedic friendships
   const friendsMap: Record<string, number[]> = {
-    Sun: [4, 8, 9, 12],     // Moon, Mars, Jupiter signs
-    Moon: [1, 5, 8, 9, 12], // Mars, Sun, Jupiter
-    Mars: [5, 4, 9, 12],    // Sun, Moon, Jupiter
-    Mercury: [5, 2, 7],     // Sun, Venus
-    Jupiter: [5, 4, 1, 8],  // Sun, Moon, Mars
-    Venus: [3, 6, 10, 11],  // Mercury, Saturn
-    Saturn: [3, 6, 2, 7],   // Mercury, Venus
+    Sun: [4, 8, 9, 12],
+    Moon: [1, 5, 8, 9, 12],
+    Mars: [5, 4, 9, 12],
+    Mercury: [5, 2, 7],
+    Jupiter: [5, 4, 1, 8],
+    Venus: [3, 6, 10, 11],
+    Saturn: [3, 6, 2, 7],
     Rahu: [3, 6, 2, 7],
     Ketu: [1, 8, 9, 12],
   };
@@ -172,16 +221,18 @@ export const calculateKundli = (
 
   // Ascendant / Lagna
   const lagnaLong = calculateAscendant(coords, jd, T, ayanamsha);
-  const lagnaRashiIndex = Math.floor(lagnaLong / 30); // 0 to 11
+  const lagnaRashiIndex = Math.floor(lagnaLong / 30);
   const lagnaRashi = RASHIS[lagnaRashiIndex];
   const lagnaDegInRashi = lagnaLong % 30;
   const lagnaDMS = toDMS(lagnaDegInRashi);
 
-  const lagnaNakshatraIndex = Math.floor(lagnaLong / (360 / 27)); // 0 to 26
+  const lagnaNakshatraIndex = Math.floor(lagnaLong / (360 / 27));
   const lagnaNakshatra = NAKSHATRAS[lagnaNakshatraIndex];
   const lagnaPada = Math.floor((lagnaLong % (360 / 27)) / (360 / 108)) + 1;
   const lagnaD9RashiId = getNavamshaRashiId(lagnaLong);
   const lagnaD9Rashi = RASHIS[lagnaD9RashiId - 1];
+  const lagnaIsVargottama = lagnaRashi.id === lagnaD9Rashi.id;
+  const lagnaDegSup = toSuperscript(lagnaDMS.deg);
 
   // Planets
   const rawPlanets = calculateAllPlanets(coords, jd, T, ayanamsha);
@@ -195,6 +246,7 @@ export const calculateKundli = (
     const rashi = RASHIS[rashiIndex];
     const rashiDegree = raw.longitude % 30;
     const dms = toDMS(rashiDegree);
+    const degSup = toSuperscript(dms.deg);
 
     const nakshatraIndex = Math.floor(raw.longitude / (360 / 27));
     const nakshatra = NAKSHATRAS[nakshatraIndex];
@@ -208,17 +260,34 @@ export const calculateKundli = (
     const d9Rashi = RASHIS[d9RashiId - 1];
     const d9House = ((d9Rashi.id - lagnaD9Rashi.id + 12) % 12) + 1;
 
-    // Combustion check: within 8-10 degrees of Sun
+    // Vargottama: Same Rashi in D1 and D9
+    const isVargottama = rashi.id === d9Rashi.id;
+
+    // Combustion check: within 8.5 degrees of Sun
     let diffWithSun = Math.abs(raw.longitude - sunPos);
     if (diffWithSun > 180) diffWithSun = 360 - diffWithSun;
     const isCombust = raw.key !== 'Sun' && raw.key !== 'Rahu' && raw.key !== 'Ketu' && diffWithSun < 8.5;
 
     const dignityInfo = getPlanetDignity(def, rashi.id, rashiDegree);
 
+    // Build status symbols matching screenshot:
+    // * : वक्री, ^ : अस्त, ▫ : वर्गोत्तम, ↑ : उच्च, ↓ : नीच
+    let symbols = '';
+    if (raw.isRetrograde) symbols += '*';
+    if (isCombust) symbols += '^';
+    if (isVargottama) symbols += '▫';
+    if (dignityInfo.dignity === 'Exalted') symbols += '↑';
+    if (dignityInfo.dignity === 'Debilitated') symbols += '↓';
+
+    // Display tag on chart, e.g. "मं▫²⁷", "रा*▫¹⁵", "च¹³"
+    const displayTag = `${def.shortCode}${symbols}${degSup}`;
+
     calculatedPlanets.push({
       key: def.key,
       nameEn: def.nameEn,
       nameHi: def.nameHi,
+      shortCode: def.shortCode,
+      chartColor: def.chartColor,
       abbr: def.abbr,
       symbol: def.symbol,
       longitude: raw.longitude,
@@ -227,11 +296,15 @@ export const calculateKundli = (
       deg: dms.deg,
       min: dms.min,
       sec: dms.sec,
+      degSuperscript: degSup,
       nakshatra,
       pada,
       speed: raw.speed,
       isRetrograde: raw.isRetrograde,
       isCombust,
+      isVargottama,
+      statusSymbols: symbols,
+      displayTag,
       d1House,
       d9Rashi,
       d9House,
@@ -280,17 +353,47 @@ export const calculateKundli = (
     ayanamsha,
     julianDay: jd,
     lagna: {
+      shortCode: 'ल',
       longitude: lagnaLong,
       rashi: lagnaRashi,
       deg: lagnaDMS.deg,
       min: lagnaDMS.min,
       sec: lagnaDMS.sec,
+      degSuperscript: lagnaDegSup,
+      displayTag: `ल${lagnaIsVargottama ? '▫' : ''}${lagnaDegSup}`,
       nakshatra: lagnaNakshatra,
       pada: lagnaPada,
       d9Rashi: lagnaD9Rashi,
+      isVargottama: lagnaIsVargottama,
     },
     planets: calculatedPlanets,
     d1Houses,
     d9Houses,
   };
+};
+
+// Compute arbitrary Shodashvarga Chart (D1 to D60)
+export const calculateVargaHouses = (kundli: KundliResult, division: number): HouseData[] => {
+  const lagnaVargaRashiId = getVargaRashiId(kundli.lagna.longitude, division);
+
+  const houses: HouseData[] = [];
+  for (let h = 1; h <= 12; h++) {
+    const houseRashiId = ((lagnaVargaRashiId - 1 + (h - 1)) % 12) + 1;
+    const houseRashi = RASHIS[houseRashiId - 1];
+
+    // Filter planets residing in this varga house
+    const occupants = kundli.planets.filter((p) => {
+      const pVargaRashiId = getVargaRashiId(p.longitude, division);
+      const pHouse = ((pVargaRashiId - lagnaVargaRashiId + 12) % 12) + 1;
+      return pHouse === h;
+    });
+
+    houses.push({
+      houseNumber: h,
+      rashi: houseRashi,
+      planets: occupants,
+    });
+  }
+
+  return houses;
 };

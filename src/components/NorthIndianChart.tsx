@@ -1,8 +1,13 @@
 import React from 'react';
-import { HouseData } from '../astrology/kundliEngine';
+import { HouseData, CalculatedPlanet } from '../astrology/kundliEngine';
 
 interface NorthIndianChartProps {
   houses: HouseData[];
+  lagnaData?: {
+    displayTag: string;
+    deg: number;
+    degSuperscript: string;
+  };
   chartTitle?: string;
   onSelectHouse?: (houseNumber: number) => void;
   selectedHouse?: number | null;
@@ -10,133 +15,132 @@ interface NorthIndianChartProps {
 
 export const NorthIndianChart: React.FC<NorthIndianChartProps> = ({
   houses,
-  chartTitle = 'लग्न कुंडली (D1)',
+  lagnaData,
+  chartTitle,
   onSelectHouse,
   selectedHouse,
 }) => {
-  // Map of houses by houseNumber (1 to 12)
   const houseMap = new Map<number, HouseData>();
   houses.forEach((h) => houseMap.set(h.houseNumber, h));
 
-  // Coordinates for the 12 houses in a 400x400 SVG
-  // House centers for Rashi numbers and Planet badges
+  // Geometrical layout on a 400x400 SVG matching classical North Indian Kundli:
+  // House 1: Top diamond
+  // House 2: Top-left triangle
+  // House 3: Upper-left outer triangle
+  // House 4: Left diamond
+  // House 5: Lower-left outer triangle
+  // House 6: Bottom-left triangle
+  // House 7: Bottom diamond
+  // House 8: Bottom-right triangle
+  // House 9: Lower-right outer triangle
+  // House 10: Right diamond
+  // House 11: Upper-right outer triangle
+  // House 12: Top-right triangle
+
   const houseConfig: Record<
     number,
     {
       rashiPos: { x: number; y: number };
-      planetsPos: { x: number; y: number };
-      polyPoints?: string;
+      planetAnchor: { x: number; y: number };
+      align: 'start' | 'middle' | 'end';
     }
   > = {
     1: {
-      rashiPos: { x: 200, y: 145 },
-      planetsPos: { x: 200, y: 95 },
+      rashiPos: { x: 200, y: 180 },
+      planetAnchor: { x: 200, y: 125 },
+      align: 'middle',
     },
     2: {
-      rashiPos: { x: 105, y: 55 },
-      planetsPos: { x: 95, y: 95 },
+      rashiPos: { x: 100, y: 130 },
+      planetAnchor: { x: 80, y: 80 },
+      align: 'middle',
     },
     3: {
-      rashiPos: { x: 55, y: 105 },
-      planetsPos: { x: 50, y: 155 },
+      rashiPos: { x: 95, y: 190 },
+      planetAnchor: { x: 55, y: 165 },
+      align: 'middle',
     },
     4: {
-      rashiPos: { x: 145, y: 200 },
-      planetsPos: { x: 95, y: 200 },
+      rashiPos: { x: 180, y: 200 },
+      planetAnchor: { x: 105, y: 200 },
+      align: 'middle',
     },
     5: {
-      rashiPos: { x: 55, y: 295 },
-      planetsPos: { x: 50, y: 250 },
+      rashiPos: { x: 95, y: 285 },
+      planetAnchor: { x: 45, y: 260 },
+      align: 'middle',
     },
     6: {
-      rashiPos: { x: 105, y: 345 },
-      planetsPos: { x: 95, y: 305 },
+      rashiPos: { x: 100, y: 310 },
+      planetAnchor: { x: 80, y: 350 },
+      align: 'middle',
     },
     7: {
-      rashiPos: { x: 200, y: 255 },
-      planetsPos: { x: 200, y: 305 },
+      rashiPos: { x: 200, y: 240 },
+      planetAnchor: { x: 200, y: 310 },
+      align: 'middle',
     },
     8: {
-      rashiPos: { x: 295, y: 345 },
-      planetsPos: { x: 305, y: 305 },
+      rashiPos: { x: 300, y: 310 },
+      planetAnchor: { x: 320, y: 350 },
+      align: 'middle',
     },
     9: {
-      rashiPos: { x: 345, y: 295 },
-      planetsPos: { x: 350, y: 250 },
+      rashiPos: { x: 305, y: 285 },
+      planetAnchor: { x: 355, y: 260 },
+      align: 'middle',
     },
     10: {
-      rashiPos: { x: 255, y: 200 },
-      planetsPos: { x: 305, y: 200 },
+      rashiPos: { x: 220, y: 200 },
+      planetAnchor: { x: 295, y: 200 },
+      align: 'middle',
     },
     11: {
-      rashiPos: { x: 345, y: 105 },
-      planetsPos: { x: 350, y: 155 },
+      rashiPos: { x: 305, y: 130 },
+      planetAnchor: { x: 345, y: 165 },
+      align: 'middle',
     },
     12: {
-      rashiPos: { x: 295, y: 55 },
-      planetsPos: { x: 305, y: 95 },
+      rashiPos: { x: 300, y: 130 },
+      planetAnchor: { x: 320, y: 80 },
+      align: 'middle',
     },
   };
 
   return (
-    <div className="w-full max-w-[420px] mx-auto bg-[#0d121f] p-3 rounded-2xl border border-amber-500/30 shadow-2xl shadow-amber-900/10">
-      <div className="flex items-center justify-between mb-2 px-1">
-        <h3 className="text-amber-300 font-semibold tracking-wide text-sm flex items-center gap-1.5">
-          <span className="text-base">☸</span> {chartTitle}
-        </h3>
-        <span className="text-[11px] text-amber-200/60 font-sans">उत्तर भारतीय पद्धति</span>
-      </div>
+    <div className="w-full max-w-[430px] mx-auto bg-[#181A1B] select-none">
+      {chartTitle && (
+        <div className="text-center py-1 text-xs font-bold text-amber-300">
+          {chartTitle}
+        </div>
+      )}
 
       <div className="relative aspect-square w-full">
         <svg
           viewBox="0 0 400 400"
-          className="w-full h-full select-none cursor-pointer"
-          style={{ filter: 'drop-shadow(0 0 10px rgba(217, 119, 6, 0.15))' }}
+          className="w-full h-full cursor-pointer"
+          style={{ background: '#181A1B' }}
         >
-          <defs>
-            {/* Cosmic Background Gradient */}
-            <linearGradient id="chartBg" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#0B0E17" />
-              <stop offset="50%" stopColor="#111827" />
-              <stop offset="100%" stopColor="#0F172A" />
-            </linearGradient>
-
-            {/* Gold Stroke Gradient */}
-            <linearGradient id="goldStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#F59E0B" />
-              <stop offset="50%" stopColor="#FCD34D" />
-              <stop offset="100%" stopColor="#D97706" />
-            </linearGradient>
-
-            {/* Highlighted House Gradient */}
-            <radialGradient id="highlightGlow">
-              <stop offset="0%" stopColor="rgba(245, 158, 11, 0.35)" />
-              <stop offset="100%" stopColor="rgba(245, 158, 11, 0.0)" />
-            </radialGradient>
-          </defs>
-
-          {/* Background Outer Box */}
+          {/* Outer Border with crisp gold line */}
           <rect
-            x="4"
-            y="4"
-            width="392"
-            height="392"
-            fill="url(#chartBg)"
-            stroke="url(#goldStroke)"
+            x="2"
+            y="2"
+            width="396"
+            height="396"
+            fill="#181A1B"
+            stroke="#FBBF24"
             strokeWidth="2.5"
-            rx="4"
           />
 
-          {/* Diamond Central Lines */}
-          {/* Main Diagonals */}
-          <line x1="4" y1="4" x2="396" y2="396" stroke="url(#goldStroke)" strokeWidth="1.5" opacity="0.85" />
-          <line x1="396" y1="4" x2="4" y2="396" stroke="url(#goldStroke)" strokeWidth="1.5" opacity="0.85" />
+          {/* Main Diagonal Lines */}
+          <line x1="2" y1="2" x2="398" y2="398" stroke="#FBBF24" strokeWidth="2" />
+          <line x1="398" y1="2" x2="2" y2="398" stroke="#FBBF24" strokeWidth="2" />
 
-          {/* Inner Diamond connecting midpoints (200, 4) - (396, 200) - (200, 396) - (4, 200) */}
+          {/* Inner Diamond connecting (200, 2) - (398, 200) - (200, 398) - (2, 200) */}
           <polygon
-            points="200,4 396,200 200,396 4,200"
+            points="200,2 398,200 200,398 2,200"
             fill="none"
-            stroke="url(#goldStroke)"
+            stroke="#FBBF24"
             strokeWidth="2"
           />
 
@@ -146,89 +150,79 @@ export const NorthIndianChart: React.FC<NorthIndianChartProps> = ({
             const cfg = houseConfig[houseNum];
             const isSelected = selectedHouse === houseNum;
 
+            // In house 1, Lagna (ल) is also rendered
+            const isLagnaHouse = houseNum === 1;
+
             return (
               <g
                 key={houseNum}
                 onClick={() => onSelectHouse && onSelectHouse(houseNum)}
-                className="transition-all duration-200 hover:opacity-90"
+                className="transition-opacity hover:opacity-90"
               >
-                {/* Visual feedback if selected */}
+                {/* Selection Glow */}
                 {isSelected && (
                   <circle
                     cx={cfg.rashiPos.x}
                     cy={cfg.rashiPos.y}
-                    r="24"
-                    fill="url(#highlightGlow)"
+                    r="22"
+                    fill="rgba(245, 158, 11, 0.25)"
                   />
                 )}
 
-                {/* Rashi Number in House */}
+                {/* Rashi Number in House Center (matching screenshot: crisp, white/gray text) */}
                 {hData && (
                   <text
                     x={cfg.rashiPos.x}
                     y={cfg.rashiPos.y}
                     textAnchor="middle"
                     dominantBaseline="central"
-                    fill="#FBBF24"
-                    fontSize="13"
-                    fontWeight="700"
-                    fontFamily="serif"
-                    className="cursor-pointer"
+                    fill="#D1D5DB"
+                    fontSize="18"
+                    fontWeight="500"
+                    fontFamily="sans-serif"
                   >
                     {hData.rashi.id}
                   </text>
                 )}
 
-                {/* House Number subtle watermark */}
-                <text
-                  x={cfg.rashiPos.x}
-                  y={cfg.rashiPos.y + (houseNum === 1 ? -24 : houseNum === 7 ? 24 : 15)}
-                  textAnchor="middle"
-                  dominantBaseline="central"
-                  fill="rgba(148, 163, 184, 0.4)"
-                  fontSize="8.5"
-                  fontFamily="sans-serif"
-                >
-                  H{houseNum}
-                </text>
+                {/* Lagna (ल) in House 1 */}
+                {isLagnaHouse && lagnaData && (
+                  <text
+                    x={cfg.planetAnchor.x}
+                    y={cfg.planetAnchor.y - (hData && hData.planets.length > 0 ? 18 : 0)}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    fill="#FBBF24"
+                    fontSize="16"
+                    fontWeight="700"
+                    fontFamily="sans-serif"
+                  >
+                    {lagnaData.displayTag}
+                  </text>
+                )}
 
-                {/* Occupying Planets */}
+                {/* Occupying Planets (matching screenshot formatting e.g. मं▫²⁷, च¹³, रा*▫¹⁵) */}
                 {hData && hData.planets.length > 0 && (
                   <g>
-                    {hData.planets.map((planet, pIdx) => {
-                      const totalPlanets = hData.planets.length;
-                      // Stagger planets around center position
-                      const yOffset = (pIdx - (totalPlanets - 1) / 2) * 14;
-                      const xPos = cfg.planetsPos.x;
-                      const yPos = cfg.planetsPos.y + yOffset;
+                    {hData.planets.map((planet: CalculatedPlanet, pIdx: number) => {
+                      const total = hData.planets.length;
+                      const yOffset = (pIdx - (total - 1) / 2) * 18;
+                      const py = cfg.planetAnchor.y + yOffset;
 
                       return (
-                        <g key={planet.key} transform={`translate(${xPos}, ${yPos})`}>
-                          {/* Planet badge pill */}
-                          <rect
-                            x="-19"
-                            y="-6.5"
-                            width="38"
-                            height="13"
-                            rx="3"
-                            fill="rgba(15, 23, 42, 0.85)"
-                            stroke={planet.isRetrograde ? '#EF4444' : '#F59E0B'}
-                            strokeWidth="0.8"
-                          />
-                          <text
-                            x="0"
-                            y="0.5"
-                            textAnchor="middle"
-                            dominantBaseline="central"
-                            fill={planet.isRetrograde ? '#FCA5A5' : '#FEF08A'}
-                            fontSize="9"
-                            fontWeight="600"
-                            fontFamily="sans-serif"
-                          >
-                            {planet.nameHi}
-                            {planet.isRetrograde ? '(व)' : ''}
-                          </text>
-                        </g>
+                        <text
+                          key={planet.key}
+                          x={cfg.planetAnchor.x}
+                          y={py}
+                          textAnchor={cfg.align}
+                          dominantBaseline="central"
+                          fill={planet.chartColor}
+                          fontSize="15"
+                          fontWeight="700"
+                          fontFamily="sans-serif"
+                        >
+                          {planet.displayTag}
+                        </text>
                       );
                     })}
                   </g>
@@ -237,10 +231,6 @@ export const NorthIndianChart: React.FC<NorthIndianChartProps> = ({
             );
           })}
         </svg>
-      </div>
-
-      <div className="mt-2 text-center text-[11px] text-amber-200/50">
-        💡 किसी भी भाव (घर) पर टैप करके उसका विस्तृत फल एवं स्वामी देखें।
       </div>
     </div>
   );
