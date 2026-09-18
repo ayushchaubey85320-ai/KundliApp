@@ -1,25 +1,38 @@
 <!doctype html>
-<html lang="hi">
+<html lang="hi" translate="no" class="notranslate">
 
 <head>
   <meta charset="UTF-8" />
+  <meta name="google" content="notranslate" />
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#0B0E17" />
+  <meta name="theme-color" content="#07090E" />
   <meta name="description"
-    content="VedicKundli - जन्म कुंडली, नवमांश (D9), विंशोत्तरी दशा, मांगलिक दोष एवं गुण मिलान। पंडित संजय चौबे के मार्गदर्शन में।" />
+    content="VedicKundli - जन्म कुंडली, नवमांश (D9), षोडशवर्ग (D1-D16), विंशोत्तरी दशा, 36 गुण मिलान। पूज्य पंडित संजय चौबे के मार्गदर्शन में।" />
 
-  <title>VedicKundli | वैदिक कुंडली</title>
+  <title>VedicKundli | दिव्य वैदिक कुंडली एवं गुण मिलान</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Noto Sans Devanagari, Cinzel, Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <!-- Official Google Identity Services SDK for Real Google Sign-In -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <style>
     html,
     body {
-      background-color: #0B0E17 !important;
+      background-color: #07090E !important;
       color: #F8FAFC !important;
       margin: 0;
       padding: 0;
       min-height: 100vh;
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     #root {
@@ -28,7 +41,6 @@
   </style>
 
   <script>
-    // Global error handler to prevent silent white screens
     window.addEventListener('error', function (event) {
       console.error('VedicKundli Window Error:', event.error || event.message);
     });
@@ -37,19 +49,12 @@
     });
   </script>
 
-  <!-- Google Fonts: Cinzel, Outfit, Rozha One -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Outfit:wght@300;400;500;600;700&family=Rozha+One&display=swap"
-    rel="stylesheet" />
-
   <!-- App Favicon -->
   <link rel="icon" type="image/svg+xml"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☸</text></svg>" />
 </head>
 
-<body style="background-color: #0B0E17; color: #F8FAFC;">
+<body style="background-color: #07090E; color: #F8FAFC;">
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>

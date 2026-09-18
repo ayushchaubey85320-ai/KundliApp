@@ -1,113 +1,111 @@
 import React from 'react';
-import { TRANSLATIONS, Language } from '../i18n/translations';
-import { PanditProfileCard } from './PanditProfileCard';
 import { SavedKundliRecord } from '../services/dbConfig';
-import { Sparkles, ChevronRight, Trash2, Calendar, MapPin } from 'lucide-react';
+import { ChevronRight, Trash2, Calendar, MapPin, Award, ArrowRight } from 'lucide-react';
 
 interface HomePageProps {
-  language: Language;
   onSelectMakeKundli: () => void;
   onSelectMatchKundli: () => void;
+  onOpenPanditProfile: () => void;
   savedKundlis: SavedKundliRecord[];
   onOpenSavedKundli: (record: SavedKundliRecord) => void;
   onDeleteSavedKundli: (id: string) => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
-  language,
   onSelectMakeKundli,
   onSelectMatchKundli,
+  onOpenPanditProfile,
   savedKundlis,
   onOpenSavedKundli,
   onDeleteSavedKundli,
 }) => {
-  const t = TRANSLATIONS[language];
-
   return (
-    <div className="space-y-5 max-w-[430px] mx-auto py-1">
-      {/* Welcome Banner */}
-      <div className="text-center space-y-1">
-        <h2 className="text-lg sm:text-xl font-bold text-amber-200 font-serif">
-          {t.homeTitle}
+    <div className="space-y-4 max-w-[430px] mx-auto py-1">
+      {/* Serene App Title Banner */}
+      <div className="text-center space-y-1 py-1">
+        <h2 className="text-lg font-bold text-amber-200 font-serif tracking-wide">
+          वैदिक ज्योतिष अनुसंधान संस्थान
         </h2>
         <p className="text-xs text-slate-400">
-          {t.homeSubtitle}
+          प्राचीन पराशर एवं जातक पारिजात पद्धति पर आधारित सटीक गणना
         </p>
       </div>
 
-      {/* TWO PRIMARY ACTION BUTTONS AS REQUESTED */}
+      {/* TWO PRIMARY ACTION CARDS (Using dedicated .action-card-kundli and .action-card-milan) */}
       <div className="space-y-3">
-        {/* BUTTON 1: MAKE KUNDLI */}
+        {/* CARD 1: MAKE KUNDLI */}
         <button
           onClick={onSelectMakeKundli}
-          className="w-full text-left p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-500 text-slate-950 shadow-xl shadow-amber-500/25 border border-amber-300 transition-all hover:scale-[1.01] active:scale-[0.98] group relative overflow-hidden"
+          className="action-card-kundli group"
         >
-          {/* Subtle animated background circle */}
-          <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
-          
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-slate-950/15 backdrop-blur-md flex items-center justify-center text-2xl shadow-inner">
-                ☸
-              </div>
-              <div>
-                <span className="inline-block text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-slate-950/20 text-slate-950 mb-0.5">
-                  विकल्प 1 (Option 1)
-                </span>
-                <h3 className="text-base sm:text-lg font-black tracking-tight text-slate-950">
-                  {t.actionMakeKundliTitle}
-                </h3>
-                <p className="text-[11px] text-slate-900/90 font-medium line-clamp-1">
-                  {t.actionMakeKundliSub}
-                </p>
-              </div>
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-2xl text-amber-300 shrink-0">
+              ☸
             </div>
-            <div className="w-9 h-9 rounded-full bg-slate-950/15 flex items-center justify-center text-slate-950 group-hover:translate-x-1 transition-transform">
-              <ChevronRight size={20} />
+            <div>
+              <h3 className="text-base sm:text-lg font-extrabold tracking-tight text-amber-100">
+                जन्म कुंडली (Janam Kundli)
+              </h3>
+              <p className="text-xs text-slate-300 mt-0.5">
+                सटीक जन्मपत्री, ग्रह स्थिति, महादशा एवं सम्पूर्ण फलादेश
+              </p>
             </div>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-slate-900 text-amber-300 flex items-center justify-center shrink-0">
+            <ChevronRight size={18} />
           </div>
         </button>
 
-        {/* BUTTON 2: MATCH KUNDALI */}
+        {/* CARD 2: MATCH KUNDALI */}
         <button
           onClick={onSelectMatchKundli}
-          className="w-full text-left p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-rose-600 via-pink-600 to-amber-600 text-white shadow-xl shadow-rose-600/25 border border-rose-400/40 transition-all hover:scale-[1.01] active:scale-[0.98] group relative overflow-hidden"
+          className="action-card-milan group"
         >
-          <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-black/20 backdrop-blur-md flex items-center justify-center text-2xl shadow-inner">
-                💞
-              </div>
-              <div>
-                <span className="inline-block text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-black/25 text-rose-100 mb-0.5">
-                  विकल्प 2 (Option 2)
-                </span>
-                <h3 className="text-base sm:text-lg font-black tracking-tight text-white">
-                  {t.actionMatchKundliTitle}
-                </h3>
-                <p className="text-[11px] text-rose-100/90 font-medium line-clamp-1">
-                  {t.actionMatchKundliSub}
-                </p>
-              </div>
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-2xl text-rose-300 shrink-0">
+              💞
             </div>
-            <div className="w-9 h-9 rounded-full bg-black/20 flex items-center justify-center text-white group-hover:translate-x-1 transition-transform">
-              <ChevronRight size={20} />
+            <div>
+              <h3 className="text-base sm:text-lg font-extrabold tracking-tight text-rose-100">
+                कुंडली मिलान (Kundli Milan)
+              </h3>
+              <p className="text-xs text-slate-300 mt-0.5">
+                36 गुण अष्टकूट मिलान, नाड़ी व भकूट दोष परीक्षण
+              </p>
             </div>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-slate-900 text-rose-300 flex items-center justify-center shrink-0">
+            <ChevronRight size={18} />
           </div>
         </button>
       </div>
 
-      {/* PANDIT SANJAY CHAUBEY PROFILE CARD SHOWCASE IN HINDI (UNDER THE BUTTONS) */}
-      <div className="space-y-1 pt-1">
-        <div className="flex items-center gap-2 px-1">
-          <Sparkles size={14} className="text-amber-400" />
-          <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wider">
-            मुख्य संरक्षक एवं ज्योतिषाचार्य परिचय
-          </h4>
-        </div>
-        <PanditProfileCard compact={false} />
+      {/* DEDICATED BUTTON FOR PANDIT SANJAY CHAUBEY PROFILE (Using .action-card-pandit) */}
+      <div className="pt-1">
+        <button
+          onClick={onOpenPanditProfile}
+          className="action-card-pandit group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 p-0.5 flex items-center justify-center text-xl text-amber-300 shrink-0">
+              🕉️
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <Award size={13} className="text-amber-400" />
+                <h4 className="text-sm font-bold text-amber-200">
+                  पूज्य पं. संजय चौबे जी का परिचय
+                </h4>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">
+                30+ वर्षों का वैदिक ज्योतिष व वास्तु अनुभव • पूर्ण विवरण देखें
+              </p>
+            </div>
+          </div>
+          <div className="text-amber-400 shrink-0">
+            <ArrowRight size={16} />
+          </div>
+        </button>
       </div>
 
       {/* RECENTLY SAVED KUNDLIS (IF ANY EXIST) */}
@@ -115,7 +113,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="space-y-2 pt-2">
           <div className="flex items-center justify-between px-1">
             <span className="text-xs font-bold text-amber-300">
-              {language === 'hi' ? 'सहेजी गई कुंडलियां' : 'Saved Kundlis'} ({savedKundlis.length})
+              सहेजी गई कुंडलियां ({savedKundlis.length})
             </span>
           </div>
 
@@ -123,14 +121,14 @@ export const HomePage: React.FC<HomePageProps> = ({
             {savedKundlis.map((item) => (
               <div
                 key={item.id}
-                className="bg-slate-900/80 border border-slate-800 rounded-2xl p-3 flex items-center justify-between hover:border-amber-500/40 transition-colors"
+                className="bg-[#0F1424] border border-slate-800 rounded-2xl p-3 flex items-center justify-between hover:border-amber-500/40 transition-colors"
               >
                 <div
                   onClick={() => onOpenSavedKundli(item)}
                   className="flex-1 cursor-pointer flex items-center gap-2.5"
                 >
-                  <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-sm">
-                    {item.name.charAt(0)}
+                  <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-xs">
+                    {item.name ? item.name.charAt(0) : 'कु'}
                   </div>
                   <div>
                     <h5 className="text-xs font-bold text-amber-100">{item.name}</h5>
@@ -139,7 +137,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                         <Calendar size={10} /> {item.birthDate}
                       </span>
                       <span className="flex items-center gap-1">
-                        <MapPin size={10} /> {item.cityName.split(',')[0]}
+                        <MapPin size={10} /> {item.cityName ? item.cityName.split(',')[0] : ''}
                       </span>
                     </div>
                   </div>
