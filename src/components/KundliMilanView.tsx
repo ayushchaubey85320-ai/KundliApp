@@ -319,19 +319,19 @@ export const KundliMilanView: React.FC<KundliMilanViewProps> = ({
           </div>
 
           {/* SIDE-BY-SIDE ALL POINTS BREAKDOWN (AS REQUESTED) */}
-          <div className="bg-slate-900/90 rounded-3xl border border-amber-500/30 p-4 space-y-3">
+          <div className="bg-slate-900/90 rounded-3xl border border-amber-500/30 p-4 space-y-3.5">
             <div className="flex items-center justify-between border-b border-slate-800 pb-2">
               <div className="flex items-center gap-2">
-                <Award size={16} className="text-amber-400" />
-                <h3 className="text-xs font-bold text-amber-200">
+                <Award size={18} className="text-amber-400" />
+                <h3 className="text-sm font-bold text-amber-200">
                   {t.gunaBreakdownTitle}
                 </h3>
               </div>
-              <span className="text-[11px] text-slate-400">८ कूट (36 गुण)</span>
+              <span className="text-xs text-slate-300 font-medium">८ कूट (36 गुण)</span>
             </div>
 
             {/* List of 8 Kootas with points side-by-side and details */}
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               {KOOTA_INFO.map((k) => {
                 const kScore = (milanResult.kootas as any)[k.key];
                 const obtained = kScore?.obtainedPoints ?? 0;
@@ -341,7 +341,7 @@ export const KundliMilanView: React.FC<KundliMilanViewProps> = ({
                 return (
                   <div
                     key={k.key}
-                    className={`rounded-2xl border p-3 transition-colors ${
+                    className={`rounded-2xl border p-3.5 transition-colors ${
                       isZero
                         ? 'bg-rose-950/20 border-rose-500/30'
                         : isFull
@@ -351,31 +351,31 @@ export const KundliMilanView: React.FC<KundliMilanViewProps> = ({
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <h4 className="text-xs font-bold text-amber-100">
+                        <h4 className="text-sm font-bold text-amber-100">
                           {language === 'hi' ? k.nameHi : k.nameEn}
                         </h4>
                       </div>
 
                       {/* SIDE-BY-SIDE POINTS PILL */}
-                      <div className="flex items-center gap-1 bg-slate-950 px-2.5 py-1 rounded-xl border border-slate-700 shrink-0">
+                      <div className="flex items-center gap-1.5 bg-slate-950 px-3 py-1 rounded-xl border border-slate-700 shrink-0">
                         <span
-                          className={`text-xs font-black ${
+                          className={`text-sm font-black ${
                             isZero ? 'text-rose-400' : isFull ? 'text-emerald-400' : 'text-amber-400'
                           }`}
                         >
                           {obtained}
                         </span>
-                        <span className="text-[10px] text-slate-500">/ {k.max}</span>
+                        <span className="text-xs text-slate-400">/ {k.max}</span>
                       </div>
                     </div>
 
                     {/* Explanatory description in Hindi or English */}
-                    <p className="text-[11px] text-slate-300 mt-1 leading-relaxed">
+                    <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
                       {language === 'hi' ? k.purposeHi : k.purposeEn}
                     </p>
 
                     {/* Specific result comment */}
-                    <div className="mt-1.5 pt-1.5 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                    <div className="mt-2 pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
                       <span className="text-slate-400">
                         {language === 'hi' ? 'शास्त्रीय फल:' : 'Scriptural Verdict:'}
                       </span>

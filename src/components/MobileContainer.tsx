@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { AppUser } from '../services/dbConfig';
 import { Language, TRANSLATIONS } from '../i18n/translations';
 import {
-  Smartphone,
-  Monitor,
   Bookmark,
   PlusCircle,
   Share2,
@@ -49,38 +47,14 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
   activeScreen,
 }) => {
   const t = TRANSLATIONS[language];
-  const [isPhoneFrame, setIsPhoneFrame] = useState(true);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const isGuest = !currentUser || currentUser.isGuest;
 
   return (
-    <div className="min-h-screen bg-[#06080F] text-slate-100 flex flex-col items-center justify-start p-0 sm:p-4 selection:bg-amber-500 selection:text-black">
-      {/* Top Desktop Controls Bar (No duplicate logo) */}
-      <div className="w-full max-w-md hidden sm:flex items-center justify-between py-1.5 px-2 text-xs text-slate-400">
-        <div className="flex items-center gap-1.5">
-          <span className="text-amber-400 font-bold tracking-wide">VedicKundli</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setIsPhoneFrame(!isPhoneFrame)}
-            className="px-2.5 py-1 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-amber-300 flex items-center gap-1 transition-colors border border-slate-800"
-            title="Toggle Frame"
-          >
-            {isPhoneFrame ? <Monitor size={13} /> : <Smartphone size={13} />}
-            <span>{isPhoneFrame ? 'फुल स्क्रीन' : 'मोबाइल दृश्य'}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Main Mobile Frame */}
-      <div
-        className={`w-full transition-all duration-300 flex flex-col bg-[#0A0E1A] ${
-          isPhoneFrame
-            ? 'max-w-[440px] sm:my-3 sm:rounded-[36px] sm:border-[8px] sm:border-[#161D2F] sm:shadow-[0_0_60px_rgba(212,175,55,0.12)] min-h-[92vh] sm:overflow-hidden relative'
-            : 'max-w-4xl rounded-2xl border border-slate-800 my-4'
-        }`}
-      >
+    <div className="min-h-screen bg-[#06080F] text-slate-100 flex flex-col items-center justify-start w-full selection:bg-amber-500 selection:text-black">
+      {/* Main Container: Native full-screen on mobile devices, centered on desktop */}
+      <div className="w-full max-w-md min-h-screen flex flex-col bg-[#0A0E1A] shadow-2xl relative">
         {/* App Header Bar - SINGLE AND ONLY OFFICIAL LOGO */}
         <header className="sticky top-0 z-40 bg-[#0A0E1A]/95 backdrop-blur-md border-b border-amber-500/20 px-3.5 py-2.5">
           <div className="flex items-center justify-between">
@@ -151,12 +125,12 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
                     </span>
                   </button>
 
-                  {/* Profile Dropdown */}
+                  {/* Profile Dropdown (100% Solid Opaque Background) */}
                   {showProfileMenu && (
-                    <div className="absolute right-0 mt-2 w-52 bg-[#0F1424] border border-amber-500/30 rounded-2xl shadow-2xl p-3 z-50 text-xs space-y-2.5">
-                      <div className="border-b border-slate-800 pb-2">
-                        <div className="font-bold text-amber-100">{currentUser?.name}</div>
-                        <div className="text-[10px] text-slate-400 truncate">
+                    <div className="app-profile-dropdown space-y-2.5">
+                      <div className="border-b border-slate-700/80 pb-2">
+                        <div className="font-bold text-amber-200 text-xs">{currentUser?.name}</div>
+                        <div className="text-[11px] text-slate-400 truncate mt-0.5">
                           {currentUser?.email || 'Logged in user'}
                         </div>
                       </div>
@@ -166,9 +140,9 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
                           setShowProfileMenu(false);
                           onLogout();
                         }}
-                        className="w-full py-1.5 px-3 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 font-semibold flex items-center gap-2 transition-colors text-left"
+                        className="w-full py-2 px-3 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 font-bold flex items-center gap-2 transition-colors text-left text-xs"
                       >
-                        <LogOut size={13} />
+                        <LogOut size={14} />
                         <span>{t.logoutBtn}</span>
                       </button>
                     </div>

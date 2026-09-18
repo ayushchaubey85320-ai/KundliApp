@@ -197,12 +197,12 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-3.5">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {/* Name & Gender Fields */}
-        <div className="grid grid-cols-3 gap-2.5">
+        <div className="grid grid-cols-3 gap-3">
           <div className="col-span-2">
-            <label className="block text-[11px] font-semibold text-slate-300 mb-1 flex items-center gap-1">
-              <User size={12} className="text-amber-400" />
+            <label className="form-label-prominent">
+              <User size={14} className="text-amber-400" />
               <span>{t.formName}</span>
             </label>
             <input
@@ -211,18 +211,18 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={language === 'hi' ? 'जातक का नाम दर्ज करें...' : 'Enter person name...'}
-              className="w-full px-3 py-2.5 bg-[#090D17] border border-slate-700/80 focus:border-amber-400 rounded-xl text-xs sm:text-sm text-slate-100 placeholder-slate-500 outline-none"
+              className="w-full px-3.5 py-3 bg-[#090D17] border border-slate-700 focus:border-amber-400 rounded-xl text-sm sm:text-base text-slate-100 placeholder-slate-500 outline-none font-medium"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-slate-300 mb-1">
-              {t.formGender}
+            <label className="form-label-prominent">
+              <span>{t.formGender}</span>
             </label>
             <select
               value={gender}
               onChange={(e) => setGender(e.target.value as any)}
-              className="w-full px-2 py-2.5 bg-[#090D17] border border-slate-700/80 focus:border-amber-400 rounded-xl text-xs sm:text-sm text-slate-100 outline-none cursor-pointer"
+              className="w-full px-3 py-3 bg-[#090D17] border border-slate-700 focus:border-amber-400 rounded-xl text-sm sm:text-base text-slate-100 outline-none cursor-pointer font-medium"
             >
               <option value="Male">{language === 'hi' ? 'पुरुष' : 'Male'}</option>
               <option value="Female">{language === 'hi' ? 'स्त्री' : 'Female'}</option>
@@ -232,10 +232,10 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
         </div>
 
         {/* Date & Time Fields */}
-        <div className="grid grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-[11px] font-semibold text-slate-300 mb-1 flex items-center gap-1">
-              <Calendar size={12} className="text-amber-400" />
+            <label className="form-label-prominent">
+              <Calendar size={14} className="text-amber-400" />
               <span>{t.formDate}</span>
             </label>
             <input
@@ -243,13 +243,13 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
               required
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full px-3 py-2.5 bg-[#090D17] border border-slate-700/80 focus:border-amber-400 rounded-xl text-xs sm:text-sm text-slate-100 outline-none"
+              className="w-full px-3.5 py-3 bg-[#090D17] border border-slate-700 focus:border-amber-400 rounded-xl text-sm sm:text-base text-slate-100 outline-none font-medium"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-slate-300 mb-1 flex items-center gap-1">
-              <Clock size={12} className="text-amber-400" />
+            <label className="form-label-prominent">
+              <Clock size={14} className="text-amber-400" />
               <span>{t.formTime}</span>
             </label>
             <input
@@ -257,24 +257,24 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
               required
               value={time}
               onChange={(e) => setTime(e.target.value)}
-              className="w-full px-3 py-2.5 bg-[#090D17] border border-slate-700/80 focus:border-amber-400 rounded-xl text-xs sm:text-sm text-slate-100 outline-none"
+              className="w-full px-3.5 py-3 bg-[#090D17] border border-slate-700 focus:border-amber-400 rounded-xl text-sm sm:text-base text-slate-100 outline-none font-medium"
             />
           </div>
         </div>
 
         {/* Place of Birth & Dynamic GPS Search */}
-        <div className="relative">
-          <div className="flex items-center justify-between mb-1">
-            <label className="text-[11px] font-semibold text-slate-300 flex items-center gap-1">
-              <MapPin size={12} className="text-amber-400" />
+        <div className="relative z-30">
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="form-label-prominent mb-0">
+              <MapPin size={14} className="text-amber-400" />
               <span>{t.formPlace}</span>
             </label>
             <button
               type="button"
               onClick={handleUseGPS}
-              className="text-[10px] text-amber-300 hover:text-amber-200 flex items-center gap-1 underline"
+              className="text-xs text-amber-300 hover:text-amber-200 flex items-center gap-1 font-semibold underline"
             >
-              <Compass size={11} />
+              <Compass size={13} />
               <span>{gpsLoading ? 'खोज रहे...' : (language === 'hi' ? 'जीपीएस से लें' : 'GPS')}</span>
             </button>
           </div>
@@ -289,25 +289,52 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
                 if (citySearch.trim()) handleCityInput(citySearch);
               }}
               placeholder={language === 'hi' ? 'शहर या गांव खोजें (उदा. Varanasi, Lucknow)...' : 'Search city or town...'}
-              className="w-full pl-8 pr-8 py-2.5 bg-[#090D17] border border-slate-700/80 focus:border-amber-400 rounded-xl text-xs sm:text-sm text-slate-100 placeholder-slate-500 outline-none"
+              className="w-full pl-9 pr-9 py-3 bg-[#090D17] border border-slate-700 focus:border-amber-400 rounded-xl text-sm sm:text-base text-slate-100 placeholder-slate-500 outline-none font-medium"
             />
-            <Search size={14} className="absolute left-2.5 top-3.5 text-slate-400" />
+            <Search size={16} className="absolute left-3 top-3.5 text-slate-400" />
             {isSearching && (
-              <Loader2 size={14} className="absolute right-2.5 top-3.5 text-amber-400 animate-spin" />
+              <Loader2 size={16} className="absolute right-3 top-3.5 text-amber-400 animate-spin" />
             )}
           </div>
 
-          {/* Autocomplete Dropdown */}
+          {/* Autocomplete Dropdown (100% Solid Opaque Faded Dark Background - High z-index) */}
           {isDropdownOpen && searchResults.length > 0 && (
-            <div className="absolute z-30 left-0 right-0 mt-1 bg-[#090D17] border border-amber-500/40 rounded-xl shadow-2xl max-h-48 overflow-y-auto">
+            <div
+              className="city-autocomplete-dropdown"
+              style={{
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                top: 'calc(100% + 4px)',
+                backgroundColor: '#0C1222',
+                background: '#0C1222',
+                opacity: 1,
+                zIndex: 99999,
+                border: '1.5px solid #D4AF37',
+                borderRadius: '16px',
+                boxShadow: '0 24px 60px rgba(0, 0, 0, 0.98), 0 0 30px rgba(212, 175, 55, 0.25)',
+                maxHeight: '260px',
+                overflowY: 'auto'
+              }}
+            >
               {searchResults.map((item, idx) => (
                 <div
                   key={idx}
                   onClick={() => handleSelectLocation(item)}
-                  className="px-3 py-2 text-xs hover:bg-amber-500/20 cursor-pointer border-b border-slate-800 last:border-0"
+                  className="city-suggestion-item"
+                  style={{
+                    backgroundColor: '#0C1222',
+                    background: '#0C1222',
+                    padding: '12px 16px',
+                    borderBottom: idx === searchResults.length - 1 ? 'none' : '1px solid rgba(255, 255, 255, 0.1)'
+                  }}
                 >
-                  <div className="font-semibold text-amber-200">{item.name}</div>
-                  <div className="text-[10px] text-slate-400">{item.displayName}</div>
+                  <div className="city-suggestion-title font-bold text-amber-200 text-sm sm:text-base">
+                    {item.name}
+                  </div>
+                  <div className="city-suggestion-desc text-xs text-slate-400 mt-0.5">
+                    {item.displayName}
+                  </div>
                 </div>
               ))}
             </div>
@@ -315,7 +342,7 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
 
           {/* Location Coordinates Indicator */}
           {citySearch && (
-            <div className="mt-1 flex items-center justify-between text-[10px] text-slate-400 px-1">
+            <div className="mt-1.5 flex items-center justify-between text-xs text-slate-400 px-1 font-mono">
               <span>{selectedCoords.latitude}° N, {selectedCoords.longitude}° E</span>
               <span>UTC+{selectedCoords.timezone}</span>
             </div>
@@ -325,9 +352,9 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
         {/* Submit Button */}
         <button
           type="submit"
-          className="btn-gold-primary mt-2"
+          className="btn-gold-primary mt-3 py-3.5 text-sm sm:text-base font-bold"
         >
-          <span>☸</span>
+          <span className="text-base">☸</span>
           <span>{submitLabel || 'कुंडली तैयार करें एवं देखें'}</span>
         </button>
       </form>

@@ -21,18 +21,18 @@ export const HomePage: React.FC<HomePageProps> = ({
 }) => {
   return (
     <div className="space-y-4 max-w-[430px] mx-auto py-1">
-      {/* Serene App Title Banner */}
-      <div className="text-center space-y-1 py-1">
-        <h2 className="text-lg font-bold text-amber-200 font-serif tracking-wide">
+      {/* Spiritual Welcome Header */}
+      <div className="text-center space-y-1.5 py-1">
+        <h2 className="text-xl sm:text-2xl font-extrabold text-amber-200 font-serif tracking-wide">
           वैदिक ज्योतिष अनुसंधान संस्थान
         </h2>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs sm:text-sm text-slate-300 font-medium">
           प्राचीन पराशर एवं जातक पारिजात पद्धति पर आधारित सटीक गणना
         </p>
       </div>
 
       {/* TWO PRIMARY ACTION CARDS (Using dedicated .action-card-kundli and .action-card-milan) */}
-      <div className="space-y-3">
+      <div className="space-y-3.5">
         {/* CARD 1: MAKE KUNDLI */}
         <button
           onClick={onSelectMakeKundli}
@@ -43,10 +43,10 @@ export const HomePage: React.FC<HomePageProps> = ({
               ☸
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-extrabold tracking-tight text-amber-100">
+              <h3 className="text-lg sm:text-xl font-black tracking-tight text-amber-100">
                 जन्म कुंडली (Janam Kundli)
               </h3>
-              <p className="text-xs text-slate-300 mt-0.5">
+              <p className="text-xs sm:text-sm text-slate-200 mt-0.5">
                 सटीक जन्मपत्री, ग्रह स्थिति, महादशा एवं सम्पूर्ण फलादेश
               </p>
             </div>
@@ -66,10 +66,10 @@ export const HomePage: React.FC<HomePageProps> = ({
               💞
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-extrabold tracking-tight text-rose-100">
+              <h3 className="text-lg sm:text-xl font-black tracking-tight text-rose-100">
                 कुंडली मिलान (Kundli Milan)
               </h3>
-              <p className="text-xs text-slate-300 mt-0.5">
+              <p className="text-xs sm:text-sm text-slate-200 mt-0.5">
                 36 गुण अष्टकूट मिलान, नाड़ी व भकूट दोष परीक्षण
               </p>
             </div>
@@ -87,22 +87,22 @@ export const HomePage: React.FC<HomePageProps> = ({
           className="action-card-pandit group"
         >
           <div className="flex items-center gap-3">
-            <div className="pandit-badge-om-box" style={{ width: '40px', height: '40px', minWidth: '40px', minHeight: '40px' }}>
+            <div className="pandit-badge-om-box" style={{ width: '42px', height: '42px', minWidth: '42px', minHeight: '42px' }}>
               <img
                 src="/om_logo.png"
                 alt="Om"
                 className="pandit-badge-om-img"
-                style={{ width: '28px', height: '28px', maxWidth: '28px', maxHeight: '28px', objectFit: 'contain' }}
+                style={{ width: '30px', height: '30px', maxWidth: '30px', maxHeight: '30px', objectFit: 'contain' }}
               />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <Award size={13} className="text-amber-400" />
-                <h4 className="text-sm font-bold text-amber-200">
+                <Award size={14} className="text-amber-400" />
+                <h4 className="text-sm sm:text-base font-extrabold text-amber-200">
                   पूज्य पं. संजय चौबे जी का परिचय
                 </h4>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-300 mt-0.5">
                 30+ वर्षों का वैदिक ज्योतिष व वास्तु अनुभव • पूर्ण विवरण देखें
               </p>
             </div>

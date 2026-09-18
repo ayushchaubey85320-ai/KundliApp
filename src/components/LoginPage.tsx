@@ -89,27 +89,33 @@ export const LoginPage: React.FC<LoginPageProps> = ({ language, onLoginSuccess, 
       </div>
 
       {/* Header Titles */}
-      <div className="space-y-1">
-        <h1 className="text-2xl font-black text-amber-100 font-serif tracking-wide">
+      <div className="space-y-1.5">
+        <h1 className="text-2xl sm:text-3xl font-black text-amber-100 font-serif tracking-wide">
           VedicKundli
         </h1>
-        <p className="text-xs text-amber-300 font-medium">
+        <p className="text-sm text-amber-300 font-semibold tracking-wide">
           मार्गदर्शन: पं. संजय चौबे
         </p>
-        <p className="text-xs text-slate-400 max-w-[280px] mx-auto pt-0.5 leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-300 max-w-[300px] mx-auto pt-0.5 leading-relaxed">
           सटीक जन्मपत्री निर्माण एवं 36 गुण मिलान हेतु प्रवेश करें
         </p>
       </div>
 
       {/* Login Action Card */}
-      <div className="w-full bg-[#0F1424]/90 border border-amber-500/30 rounded-3xl p-5 shadow-2xl backdrop-blur-md space-y-3.5">
+      <div className="w-full bg-[#0F1424] border border-amber-500/40 rounded-3xl p-5 sm:p-6 shadow-2xl backdrop-blur-md space-y-4">
         {/* Official Standard Google Sign-in Button */}
         <button
           onClick={handleGoogleClick}
           className="btn-google-auth"
         >
-          {/* Standard 18px Official Google Icon */}
-          <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24">
+          {/* Standard 20px Official Google Icon with hard dimensions */}
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            className="btn-google-auth-icon"
+            style={{ width: '20px', height: '20px', minWidth: '20px', minHeight: '20px' }}
+          >
             <path
               fill="#4285F4"
               d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
@@ -127,14 +133,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ language, onLoginSuccess, 
               d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
             />
           </svg>
-          <span className="font-semibold text-slate-800 text-sm">
+          <span className="font-bold text-slate-800 text-[15px]">
             {t.googleSignIn}
           </span>
         </button>
 
         <div className="flex items-center gap-3 my-1">
           <div className="h-px bg-slate-800 flex-1" />
-          <span className="text-[11px] text-slate-500 font-medium">
+          <span className="text-xs text-slate-400 font-medium">
             {language === 'hi' ? 'अथवा' : 'OR'}
           </span>
           <div className="h-px bg-slate-800 flex-1" />
@@ -144,19 +150,20 @@ export const LoginPage: React.FC<LoginPageProps> = ({ language, onLoginSuccess, 
         <button
           onClick={handleSkip}
           className="btn-secondary"
+          style={{ height: '48px', fontSize: '14.5px', fontWeight: '600' }}
         >
-          <UserCheck size={14} className="text-amber-400" />
+          <UserCheck size={16} className="text-amber-400" />
           <span>{t.skipGuest}</span>
-          <ArrowRight size={13} className="text-amber-400" />
+          <ArrowRight size={15} className="text-amber-400" />
         </button>
 
         {/* Google OAuth Mapping Helper Toggle */}
         <div className="pt-1">
           <button
             onClick={() => setShowConfig(!showConfig)}
-            className="text-[10px] text-slate-400 hover:text-amber-300 transition-colors flex items-center justify-center gap-1 mx-auto"
+            className="text-[11px] text-slate-400 hover:text-amber-300 transition-colors flex items-center justify-center gap-1.5 mx-auto"
           >
-            <KeyRound size={11} />
+            <KeyRound size={12} />
             <span>Google Cloud Client ID सेट करें (Real Auth Link)</span>
           </button>
         </div>
@@ -199,14 +206,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ language, onLoginSuccess, 
       </div>
 
       {/* Clean Benefits Note */}
-      <div className="bg-[#0B0F1A]/80 border border-slate-800 rounded-2xl p-3 text-left space-y-1.5 text-xs text-slate-400">
-        <div className="flex items-center gap-1.5 text-amber-400 font-semibold text-[11px]">
-          <CheckCircle size={13} />
-          <span>लॉगिन के लाभ:</span>
+      <div className="bg-[#0B0F1A] border border-amber-500/20 rounded-2xl p-3.5 text-left space-y-2 text-xs text-slate-300 shadow-md">
+        <div className="flex items-center gap-2 text-amber-400 font-bold text-xs">
+          <CheckCircle size={15} />
+          <span>लॉगिन के विशेष लाभ:</span>
         </div>
-        <ul className="space-y-1 text-[11px] text-slate-300 pl-4 list-disc">
+        <ul className="space-y-1.5 text-xs text-slate-300 pl-5 list-disc leading-relaxed">
           <li>अपनी व परिवार की कुंडलियां सुरक्षित क्लाउड डेटाबेस पर सहेजें</li>
-          <li>36 गुण मिलान का विस्तृत परिणाम सुरक्षित रखें</li>
+          <li>36 गुण मिलान का विस्तृत परिणाम कभी भी पुनः देखें</li>
         </ul>
       </div>
     </div>
